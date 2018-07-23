@@ -1,14 +1,32 @@
 package com.smartec.tiendavehiculos.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.loopj.android.http.*;
 import com.smartec.tiendavehiculos.R;
+import com.smartec.tiendavehiculos.entidades.Marca;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,9 +36,19 @@ import com.smartec.tiendavehiculos.R;
  * Use the {@link RegistroVehiculoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RegistroVehiculoFragment extends Fragment {
+public class RegistroVehiculoFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
+    private AsyncHttpClient cliente;
+    private Spinner spinnerMarca;
+    ArrayList<Marca> listaMarca;
+    ProgressDialog progress;
+    JsonObjectRequest jsonObjectRequest;
+    RequestQueue request;
+
+
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -65,8 +93,58 @@ public class RegistroVehiculoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_registro_vehiculo, container, false);
+        View viewRVehiculos = inflater.inflate(R.layout.fragment_registro_vehiculo, container, false);
+        listaMarca = new ArrayList<>();
+        spinnerMarca = viewRVehiculos.findViewById(R.id.spinnerMarca);
+        request = Volley.newRequestQueue(getContext());
+        cargarWebService();
+        return viewRVehiculos;
     }
+
+    private void cargarWebService() {
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Consultando...");
+        progress.show();
+        String url = "http://192.168.0.19:9001/appVehiculos/getMarcas.php";
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
+        request.add(jsonObjectRequest);
+    }
+
+//    private void llenarSpinnerMarca(){
+//        String url = "http://192.168.47.1:9001/appVehiculos/getMarcas.php";
+//        cliente.post(url, new AsyncHttpResponseHandler() {
+//            @Override
+//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+//                if(statusCode == 200){
+//                    cargarSpinnerMarca(new String(responseBody));
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+//
+//            }
+//        });
+//
+//    }
+//
+//    private void cargarSpinnerMarca(String respuesta){
+//        ArrayList<Marca> lista = new ArrayList<Marca>();
+//
+//        try {
+//            JSONArray jsonArray = new JSONArray(respuesta);
+//            for(int i = 0; i <jsonArray.length(); i++){
+//                Marca marca = new Marca();
+//                marca.setDescripcion(jsonArray.getJSONObject(i).getString("descripcionMarca"));
+//                lista.add(marca);
+//            }
+//            ArrayAdapter<Marca> arrayAdapterMarca = new ArrayAdapter<Marca>(getContext(),android.R.layout.simple_dropdown_item_1line, lista);
+//            spinnerMarca.setAdapter(arrayAdapterMarca);
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//
+//    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -86,10 +164,43 @@ public class RegistroVehiculoFragment extends Fragment {
         }
     }
 
+
+
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        Toast.makeText(getContext(), "No se puede Conectar" + error.toString(),Toast.LENGTH_LONG).show();
+        Log.d("ERROR: ", error.toString());
+        progress.hide();
+    }
+
+    @Override
+    public void onResponse(JSONObject response) {
+        Marca marca = null;
+        JSONArray json = response.optJSONArray("marcas");
+
+        try {
+            for (int i = 0; i<json.length(); i ++){
+                marca = new Marca();
+                JSONObject jsonObject = null;
+                jsonObject = json.getJSONObject(i);
+
+                marca.setDescripcion(jsonObject.optString("descripcionMarca"));
+                listaMarca.add(marca);
+            }
+            progress.hide();
+            ArrayAdapter<Marca> arrayAdapterMarca = new ArrayAdapter<Marca>(getContext(),android.R.layout.simple_dropdown_item_1line, listaMarca);
+            spinnerMarca.setAdapter(arrayAdapterMarca);
+
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(getContext(), "No se ha podido establecer conexión con el servidor" + e, Toast.LENGTH_LONG).show();
+        }
     }
 
     /**
