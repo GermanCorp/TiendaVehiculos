@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,6 +19,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.smartec.tiendavehiculos.R;
+import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.entidades.Marca;
 import com.smartec.tiendavehiculos.entidades.Modelo;
 
@@ -101,7 +101,6 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
 
         listaModelo = new ArrayList<>();
         spinnerModelo = viewRVehiculos.findViewById(R.id.spinnerModelo);
-
         request = Volley.newRequestQueue(getContext());
         cargarMarcas();
         return viewRVehiculos;
@@ -111,8 +110,8 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
         progress = new ProgressDialog(getContext());
         progress.setMessage("Consultando...");
         progress.show();
-        String url = "http://192.168.0.19:9001/appVehiculos/getMarcas.php";
-        String url2 = "http://192.168.0.19:9001/appVehiculos/getModelos.php";
+        String url = "http://192.168.47.1:9001/appVehiculos/getMarcas.php";
+        String url2 = "http://192.168.47.1:9001/appVehiculos/getModelos.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
 
@@ -124,46 +123,10 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
         progress = new ProgressDialog(getContext());
         progress.setMessage("Consultando...");
         progress.show();
-        String url = "http://192.168.0.19:9001/appVehiculos/getModelos.php";
+        String url = ServerConfig.URL_BASE;
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
     }
-
-//    private void llenarSpinnerMarca(){
-//        String url = "http://192.168.47.1:9001/appVehiculos/getMarcas.php";
-//        cliente.post(url, new AsyncHttpResponseHandler() {
-//            @Override
-//            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-//                if(statusCode == 200){
-//                    cargarSpinnerMarca(new String(responseBody));
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-//
-//            }
-//        });
-//
-//    }
-//
-//    private void cargarSpinnerMarca(String respuesta){
-//        ArrayList<Marca> lista = new ArrayList<Marca>();
-//
-//        try {
-//            JSONArray jsonArray = new JSONArray(respuesta);
-//            for(int i = 0; i <jsonArray.length(); i++){
-//                Marca marca = new Marca();
-//                marca.setDescripcion(jsonArray.getJSONObject(i).getString("descripcionMarca"));
-//                lista.add(marca);
-//            }
-//            ArrayAdapter<Marca> arrayAdapterMarca = new ArrayAdapter<Marca>(getContext(),android.R.layout.simple_dropdown_item_1line, lista);
-//            spinnerMarca.setAdapter(arrayAdapterMarca);
-//        }catch (Exception e){
-//            e.printStackTrace();
-//        }
-//
-//    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -201,14 +164,14 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
     @Override
     public void onResponse(JSONObject response) {
         llenarSpinnerMarca(response);
-        llenarSpinnerModelo(response);
+        //llenarSpinnerModelo(response);
 
     }
 
     private void llenarSpinnerMarca(JSONObject response){
         Marca marca = null;
         JSONArray json = response.optJSONArray("marcas");
-
+        int vuelta = 0;
         try {
             for (int i = 0; i<json.length(); i ++){
                 marca = new Marca();
@@ -217,6 +180,7 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
 
                 marca.setDescripcion(jsonObject.optString("descripcionMarca"));
                 listaMarca.add(marca);
+                vuelta = i;
             }
             progress.hide();
             ArrayAdapter<Marca> arrayAdapterMarca = new ArrayAdapter<Marca>(getContext(),android.R.layout.simple_dropdown_item_1line, listaMarca);
@@ -224,7 +188,7 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
 
         }catch (Exception e){
             e.printStackTrace();
-            Toast.makeText(getContext(), "No se ha podido establecer conexión con el servidor" + e, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), " Vuelta" + vuelta+"No se ha podido establecer conexión con el servidor. " + e, Toast.LENGTH_LONG).show();
         }
     }
 
