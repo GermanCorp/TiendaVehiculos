@@ -19,7 +19,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.smartec.tiendavehiculos.R;
-import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.entidades.Marca;
 import com.smartec.tiendavehiculos.entidades.Modelo;
 
@@ -123,7 +122,7 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
         progress = new ProgressDialog(getContext());
         progress.setMessage("Consultando...");
         progress.show();
-        String url = ServerConfig.URL_BASE;
+        String url = "http://192.168.0.19:9001/appVehiculos/getModelos.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
     }
