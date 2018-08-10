@@ -18,6 +18,7 @@ import com.smartec.tiendavehiculos.R;
  * Use the {@link RegistroUsuariosFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
 public class RegistroUsuariosFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -43,6 +44,7 @@ public class RegistroUsuariosFragment extends Fragment {
      * @return A new instance of fragment RegistroUsuariosFragment.
      */
     // TODO: Rename and change types and number of parameters
+
     public static RegistroUsuariosFragment newInstance(String param1, String param2) {
         RegistroUsuariosFragment fragment = new RegistroUsuariosFragment();
         Bundle args = new Bundle();
@@ -102,6 +104,7 @@ public class RegistroUsuariosFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
