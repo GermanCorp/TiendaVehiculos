@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -19,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.smartec.tiendavehiculos.R;
+import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.entidades.Marca;
 import com.smartec.tiendavehiculos.entidades.Modelo;
 
@@ -35,7 +37,6 @@ import java.util.ArrayList;
  * Use the {@link RegistroVehiculoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-
 public class RegistroVehiculoFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -101,8 +102,10 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
 
         listaModelo = new ArrayList<>();
         spinnerModelo = viewRVehiculos.findViewById(R.id.spinnerModelo);
+
         request = Volley.newRequestQueue(getContext());
         cargarMarcas();
+        cargarModelos();
         return viewRVehiculos;
     }
 
@@ -110,12 +113,8 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
         progress = new ProgressDialog(getContext());
         progress.setMessage("Consultando...");
         progress.show();
-        String url = "http://192.168.47.1:9001/appVehiculos/getMarcas.php";
-        String url2 = "http://192.168.47.1:9001/appVehiculos/getModelos.php";
+        String url = ServerConfig.URL_BASE + "getMarcas.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
-        request.add(jsonObjectRequest);
-
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url2,null,this,this);
         request.add(jsonObjectRequest);
     }
 
@@ -123,7 +122,7 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
         progress = new ProgressDialog(getContext());
         progress.setMessage("Consultando...");
         progress.show();
-        String url = "http://192.168.0.19:9001/appVehiculos/getModelos.php";
+        String url = ServerConfig.URL_BASE + "getModelos.php";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
         request.add(jsonObjectRequest);
     }
@@ -147,7 +146,6 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
     }
 
 
-
     @Override
     public void onDetach() {
         super.onDetach();
@@ -164,14 +162,14 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
     @Override
     public void onResponse(JSONObject response) {
         llenarSpinnerMarca(response);
-        //llenarSpinnerModelo(response);
+        llenarSpinnerModelo(response);
 
     }
 
     private void llenarSpinnerMarca(JSONObject response){
         Marca marca = null;
         JSONArray json = response.optJSONArray("marcas");
-        int vuelta = 0;
+
         try {
             for (int i = 0; i<json.length(); i ++){
                 marca = new Marca();
@@ -180,7 +178,6 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
 
                 marca.setDescripcion(jsonObject.optString("descripcionMarca"));
                 listaMarca.add(marca);
-                vuelta = i;
             }
             progress.hide();
             ArrayAdapter<Marca> arrayAdapterMarca = new ArrayAdapter<Marca>(getContext(),android.R.layout.simple_dropdown_item_1line, listaMarca);
@@ -188,24 +185,8 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
 
         }catch (Exception e){
             e.printStackTrace();
-            Toast.makeText(getContext(), " Vuelta" + vuelta+"No se ha podido establecer conexión con el servidor. " + e, Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "No se ha podido establecer conexión con el servidor" + e, Toast.LENGTH_LONG).show();
         }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     private void llenarSpinnerModelo(JSONObject response){
@@ -229,5 +210,20 @@ public class RegistroVehiculoFragment extends Fragment implements Response.Liste
             e.printStackTrace();
             Toast.makeText(getContext(), "No se ha podido establecer conexión con el servidor" + e, Toast.LENGTH_LONG).show();
         }
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 }
