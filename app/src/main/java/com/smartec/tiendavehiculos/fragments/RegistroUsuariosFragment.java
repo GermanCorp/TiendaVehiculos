@@ -5,14 +5,21 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,28 +28,28 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.StringRequest;
 import com.smartec.tiendavehiculos.R;
 
-import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
+import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link RegistroUsuariosFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link RegistroUsuariosFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 
-public class RegistroUsuariosFragment extends Fragment implements Response.Listener<JSONObject>,Response.ErrorListener{
+public class RegistroUsuariosFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -53,20 +60,20 @@ public class RegistroUsuariosFragment extends Fragment implements Response.Liste
     private String mParam2;
 
     String path;
-
-    private final String CARPETA_RAIZ ="misImagenesPrueba/";
-    private final String RUTA_IMAGEN = CARPETA_RAIZ+"misFotos";
-
-    final int COD_SELECCIONA = 10;
-    final int COD_FOTO = 20;
+    private final String CARPETA_PRINCIPAL ="misImagenesApp/";
+    private final String CARPETA_IMAGEN ="imagenes";
+    private final String DIRECTORIO_IMAGEN= CARPETA_PRINCIPAL+CARPETA_IMAGEN;
+    private final int COD_SELECCIONA = 10;
+    private final int COD_FOTO = 20;
+    Bitmap bitmap;
+    File fileImagen;
 
     ImageView fotoUsuario;
-
-    TextInputEditText nombres, apellidos, email, telefono, celular,nombreUsuario, contraseña;
+    TextInputEditText nombres, apellidos,direccion, email, telefono, celular,nombreUsuario, contraseña;
     Button botonRegistrar;
 
     RequestQueue requestQueue;
-    JsonObjectRequest jsonObjectRequest;
+    StringRequest stringRequest;
 
     private OnFragmentInteractionListener mListener;
 
@@ -74,15 +81,7 @@ public class RegistroUsuariosFragment extends Fragment implements Response.Liste
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RegistroUsuariosFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
 
     public static RegistroUsuariosFragment newInstance(String param1, String param2) {
         RegistroUsuariosFragment fragment = new RegistroUsuariosFragment();
@@ -102,7 +101,6 @@ public class RegistroUsuariosFragment extends Fragment implements Response.Liste
         }
     }
 
-    @SuppressLint("CutPasteId")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -112,6 +110,7 @@ public class RegistroUsuariosFragment extends Fragment implements Response.Liste
         fotoUsuario = (ImageView)vista.findViewById(R.id.imageView);
         nombres = (TextInputEditText) vista.findViewById(R.id.textNombres);
         apellidos = (TextInputEditText)vista.findViewById(R.id.textApellidos);
+        direccion =  (TextInputEditText)vista.findViewById(R.id.textDireccion);
         email = (TextInputEditText)vista.findViewById(R.id.textEmail);
         celular = (TextInputEditText)vista.findViewById(R.id.textCelular);
         contraseña = (TextInputEditText)vista.findViewById(R.id.textContrasenia);
@@ -120,7 +119,7 @@ public class RegistroUsuariosFragment extends Fragment implements Response.Liste
         botonRegistrar = (Button) vista.findViewById(R.id.buttonRegistrar);
 
 
-        requestQueue = Volley.newRequestQueue(getContext());
+        //requestQueue = Volley.newRequestQueue(getContext());
         botonRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,8 +133,91 @@ public class RegistroUsuariosFragment extends Fragment implements Response.Liste
                 cargarImagen();
             }
         });
+
+      if(validaPermisos()){
+            botonRegistrar.setEnabled(true);
+
+        }else{
+            botonRegistrar.setEnabled(false);
+        }
+
         return vista;
     }
+
+    private boolean validaPermisos(){
+        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.M){
+            return  true;
+        }
+
+        if((getContext().checkSelfPermission(CAMERA)== PackageManager.PERMISSION_GRANTED)&&
+                (getContext().checkSelfPermission(WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED)){
+            return true;
+        }
+
+        if((shouldShowRequestPermissionRationale(CAMERA))|| (shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE))){
+            cargarDialogoRecomendacion();
+        }
+        else{
+            requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE,CAMERA},100);
+        }
+
+
+        return  false;
+    }
+
+    private void cargarDialogoRecomendacion() {
+        AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+        dialogo.setTitle("Permisos Desactivados");
+        dialogo.setMessage("Debe aceptar los permisos para el correcto funcionamiento de la app");
+
+        dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE,CAMERA},100);
+            }
+        });
+        dialogo.show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(requestCode==100){
+            if(grantResults.length==2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                botonRegistrar.setEnabled(true);
+            }else{
+                solicitarPermisosManual();
+            }
+        }
+    }
+ private void solicitarPermisosManual() {
+
+        final CharSequence[] opciones = {"si",  "no"};
+        final AlertDialog.Builder alertOpciones = new AlertDialog.Builder(getContext());
+        alertOpciones.setTitle("Desea configurar los permisos de forma manual?");
+        alertOpciones.setItems(opciones, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if(opciones[i].equals("si")){
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package",getContext().getPackageName(),null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                }else{
+                   Toast.makeText(getContext(),"Los permisos no fueron aceptados",Toast.LENGTH_SHORT).show();
+                    dialogInterface.dismiss();
+                }
+            }
+        });
+
+        alertOpciones.show();
+
+
+    }
+
 
     private void cargarImagen(){
         final CharSequence[] opciones = {"Tomar Foto", "Cargar Imagen", "Cancelar"};
@@ -144,14 +226,19 @@ public class RegistroUsuariosFragment extends Fragment implements Response.Liste
         alertOpciones.setItems(opciones, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+
                 if(opciones[i].equals("Tomar Foto")){
-                    Toast.makeText(getContext(),"Tomar Foto",Toast.LENGTH_SHORT).show();
+                    tomarFotografia();
                 }else{
+
                     if(opciones[i].equals("Cargar Imagen")){
-                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        //Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("image/");
                         startActivityForResult(intent.createChooser(intent,"Seleccione la aplicacion"),COD_SELECCIONA);
 
+                    }else{
+                        dialogInterface.dismiss();
                     }
                 }
             }
@@ -160,16 +247,109 @@ public class RegistroUsuariosFragment extends Fragment implements Response.Liste
         alertOpciones.show();
     }
 
+    private void tomarFotografia() {
+
+        File miFile = new File(Environment.getExternalStorageDirectory(),DIRECTORIO_IMAGEN);
+        boolean isCreada = miFile.exists();
+        String nombre ="";
+
+        if(isCreada==false){
+            isCreada=miFile.mkdirs();
+        }
+        if(isCreada==true) {
+            nombre = (System.currentTimeMillis() / 1000) + ".jpg";
+
+        }
+            path= Environment.getExternalStorageDirectory()+File.separator+DIRECTORIO_IMAGEN+
+                    File.separator+nombre;
+
+            fileImagen= new File(path);
+
+            Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+           if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+             String authorities = getContext().getApplicationContext().getPackageName()+".provider";
+             Uri imageUri = FileProvider.getUriForFile(getContext(),authorities,fileImagen);
+             intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+            }else {
+               intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(fileImagen));
+            }
+
+            startActivityForResult(intent,COD_FOTO);
+        }
+
+
     private void cargarWebService() {
-        String url = "http://192.168.0.12/appVehiculo/registroUsuario.php?nombres="+nombres.getText().toString()+
-                "&apellidos="+apellidos.getText().toString()+"&nombreUsuario="+nombreUsuario.getText().toString()+
-                "&pasword="+contraseña.getText().toString()+"&celular="+celular.getText().toString()+
-                "&telefono="+telefono.getText().toString()+"&email="+email.getText().toString();
+        String url = "http://192.168.0.11/appVehiculo/registroUsuario.php?";
 
+        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
 
-        url=url.replace(" ","%20");
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
-        requestQueue.add(jsonObjectRequest);
+                if(response.trim().equalsIgnoreCase("registra")) {
+                    nombres.setText("");
+                    apellidos.setText("");
+                    direccion.setText("");
+                    celular.setText("");
+                    telefono.setText("");
+                    contraseña.setText("");
+                    nombreUsuario.setText("");
+                    email.setText("");
+
+                    Toast.makeText(getContext(),"Se ha registrado con exito",Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(getContext(),"No se ha registrado con exito",Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(),"No se ha podido conectar",Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        ) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                    String campoNombres = nombres.getText().toString();
+                    String campoApellidos = apellidos.getText().toString();
+                    String campoEmail = email.getText().toString();
+                    String campoTelefono = telefono.getText().toString();
+                    String campoCelular = celular.getText().toString();
+                    String campoNombreUsuario = nombreUsuario.getText().toString();
+                    String campoContrasenia = contraseña.getText().toString();
+                    String campoDireccion = direccion.getText().toString();
+                    String imagen = convertirImagenString(bitmap);
+
+                    Map<String, String> parametros = new HashMap<>();
+                    parametros.put("nombres",campoNombres);
+                    parametros.put("apellidos",campoApellidos);
+                    parametros.put("email",campoEmail);
+                    parametros.put("telefono",campoTelefono);
+                    parametros.put("celular",campoCelular);
+                    parametros.put("nombreUsuario",campoNombreUsuario);
+                    parametros.put("contrasenia",campoContrasenia);
+                    parametros.put("direccion",campoDireccion);
+                    parametros.put("imagen",imagen);
+
+                    return parametros;
+            }
+        };
+
+        requestQueue.add(stringRequest );
+
+    }
+
+    private String convertirImagenString(Bitmap bitmap) {
+
+        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,arrayOutputStream);
+        byte[] imagenByte = arrayOutputStream .toByteArray();
+        String imagenString = Base64.encodeToString(imagenByte,Base64.DEFAULT);
+
+        return imagenString;
     }
 
 
@@ -180,19 +360,27 @@ public class RegistroUsuariosFragment extends Fragment implements Response.Liste
 
             switch (requestCode){
                 case COD_SELECCIONA:
+
                     Uri miPath = data.getData();
-                    fotoUsuario.setImageURI(miPath);
+                    //fotoUsuario.setImageURI(miPath);
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(),miPath);
+                        fotoUsuario.setImageBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
+
                 case COD_FOTO:
                     MediaScannerConnection.scanFile(getContext(), new String[]{path}, null,
                             new MediaScannerConnection.OnScanCompletedListener() {
                                 @Override
                                 public void onScanCompleted(String s, Uri uri) {
-                                    Log.i("Ruta de almacenamiento","Path:"+path);
+                                    Log.i("Ruta de almacenamiento", "Path: "+path);
                                 }
                             });
 
-                    Bitmap bitmap = BitmapFactory.decodeFile(path);
+                    bitmap = BitmapFactory.decodeFile(path);
                     fotoUsuario.setImageBitmap(bitmap);
                     break;
 
@@ -227,18 +415,11 @@ public class RegistroUsuariosFragment extends Fragment implements Response.Liste
         mListener = null;
     }
 
-    @Override
-    public void onErrorResponse(VolleyError error) {
 
-    }
 
-    @Override
-    public void onResponse(JSONObject response) {
 
-    }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }
