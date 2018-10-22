@@ -34,7 +34,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.smartec.tiendavehiculos.R;
+import com.smartec.tiendavehiculos.ServerConfig;
 
 
 import java.io.ByteArrayOutputStream;
@@ -68,12 +70,15 @@ public class RegistroUsuariosFragment extends Fragment {
     Bitmap bitmap;
     File fileImagen;
 
+
     ImageView fotoUsuario;
-    TextInputEditText nombres, apellidos,direccion, email, telefono, celular,nombreUsuario, contraseña;
+    TextInputEditText campoNombres, campoApellidos,campoDireccion, campoEmail, campoTelefono, campoCelular,campoNombreUsuario, campoContrasenia;
     Button botonRegistrar;
 
     RequestQueue requestQueue;
     StringRequest stringRequest;
+    Request request;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -108,18 +113,18 @@ public class RegistroUsuariosFragment extends Fragment {
         View vista =  inflater.inflate(R.layout.fragment_registro_usuarios, container, false);
 
         fotoUsuario = (ImageView)vista.findViewById(R.id.imageView);
-        nombres = (TextInputEditText) vista.findViewById(R.id.textNombres);
-        apellidos = (TextInputEditText)vista.findViewById(R.id.textApellidos);
-        direccion =  (TextInputEditText)vista.findViewById(R.id.textDireccion);
-        email = (TextInputEditText)vista.findViewById(R.id.textEmail);
-        celular = (TextInputEditText)vista.findViewById(R.id.textCelular);
-        contraseña = (TextInputEditText)vista.findViewById(R.id.textContrasenia);
-        telefono = (TextInputEditText)vista.findViewById(R.id.textTelefono);
-        nombreUsuario = (TextInputEditText)vista.findViewById(R.id.textUsuario);
+        campoNombres = (TextInputEditText) vista.findViewById(R.id.textNombres);
+        campoApellidos= (TextInputEditText)vista.findViewById(R.id.textApellidos);
+        campoDireccion =  (TextInputEditText)vista.findViewById(R.id.textDireccion);
+        campoEmail = (TextInputEditText)vista.findViewById(R.id.textEmail);
+        campoCelular = (TextInputEditText)vista.findViewById(R.id.textCelular);
+        campoContrasenia = (TextInputEditText)vista.findViewById(R.id.textContrasenia);
+        campoTelefono = (TextInputEditText)vista.findViewById(R.id.textTelefono);
+        campoNombreUsuario = (TextInputEditText)vista.findViewById(R.id.textUsuario);
         botonRegistrar = (Button) vista.findViewById(R.id.buttonRegistrar);
 
 
-        //requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue = Volley.newRequestQueue(getContext());
         botonRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,16 +139,16 @@ public class RegistroUsuariosFragment extends Fragment {
             }
         });
 
-      if(validaPermisos()){
+      /*if(validaPermisos()){
             botonRegistrar.setEnabled(true);
 
         }else{
             botonRegistrar.setEnabled(false);
         }
-
+*/
         return vista;
     }
-
+/*
     private boolean validaPermisos(){
         if(Build.VERSION.SDK_INT<Build.VERSION_CODES.M){
             return  true;
@@ -217,7 +222,7 @@ public class RegistroUsuariosFragment extends Fragment {
 
 
     }
-
+*/
 
     private void cargarImagen(){
         final CharSequence[] opciones = {"Tomar Foto", "Cargar Imagen", "Cancelar"};
@@ -278,23 +283,23 @@ public class RegistroUsuariosFragment extends Fragment {
             startActivityForResult(intent,COD_FOTO);
         }
 
-
     private void cargarWebService() {
-        String url = "http://192.168.0.11/appVehiculo/registroUsuario.php?";
+
+        String url = ServerConfig.URL_BASE+"registroUsuario.php?";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
                 if(response.trim().equalsIgnoreCase("registra")) {
-                    nombres.setText("");
-                    apellidos.setText("");
-                    direccion.setText("");
-                    celular.setText("");
-                    telefono.setText("");
-                    contraseña.setText("");
-                    nombreUsuario.setText("");
-                    email.setText("");
+                    campoNombres.setText("");
+                    campoApellidos.setText("");
+                    campoDireccion.setText("");
+                    campoTelefono.setText("");
+                    campoCelular.setText("");
+                    campoEmail.setText("");
+                    campoNombreUsuario.setText("");
+                    campoContrasenia.setText("");
 
                     Toast.makeText(getContext(),"Se ha registrado con exito",Toast.LENGTH_SHORT).show();
                 }else{
@@ -309,37 +314,45 @@ public class RegistroUsuariosFragment extends Fragment {
             }
         }
 
-        ) {
+        ){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
 
-                    String campoNombres = nombres.getText().toString();
-                    String campoApellidos = apellidos.getText().toString();
-                    String campoEmail = email.getText().toString();
-                    String campoTelefono = telefono.getText().toString();
-                    String campoCelular = celular.getText().toString();
-                    String campoNombreUsuario = nombreUsuario.getText().toString();
-                    String campoContrasenia = contraseña.getText().toString();
-                    String campoDireccion = direccion.getText().toString();
+
+                    String nombres =campoNombres.getText().toString();
+                    String apellidos = campoApellidos.getText().toString();
+                    String email = campoEmail.getText().toString();
+                    String telefono = campoTelefono.getText().toString();
+                    String celular = campoCelular.getText().toString();
+                    String nombreUsuario = campoNombreUsuario.getText().toString();
+                    String contraseniaa =campoContrasenia.getText().toString();
+                    //String direccion = campoDireccion.getText().toString();
+
+
                     String imagen = convertirImagenString(bitmap);
 
+
+
                     Map<String, String> parametros = new HashMap<>();
-                    parametros.put("nombres",campoNombres);
-                    parametros.put("apellidos",campoApellidos);
-                    parametros.put("email",campoEmail);
-                    parametros.put("telefono",campoTelefono);
-                    parametros.put("celular",campoCelular);
-                    parametros.put("nombreUsuario",campoNombreUsuario);
-                    parametros.put("contrasenia",campoContrasenia);
-                    parametros.put("direccion",campoDireccion);
+                    parametros.put("nombres",nombres);
+                    parametros.put("apellidos",apellidos);
+                    //parametros.put("direccion",direccion);
+                    parametros.put("telefono",telefono);
+                    parametros.put("celular",celular);
+                    parametros.put("email",email);
+                    parametros.put("nombreUsuario",nombreUsuario);
+                    parametros.put("contrasenia",contraseniaa);
+
+
                     parametros.put("imagen",imagen);
+
+
 
                     return parametros;
             }
         };
 
         requestQueue.add(stringRequest );
-
     }
 
     private String convertirImagenString(Bitmap bitmap) {
@@ -351,7 +364,6 @@ public class RegistroUsuariosFragment extends Fragment {
 
         return imagenString;
     }
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
