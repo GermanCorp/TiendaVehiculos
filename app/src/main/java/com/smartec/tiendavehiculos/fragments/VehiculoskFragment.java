@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -21,17 +22,11 @@ import com.smartec.tiendavehiculos.R;
 import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.entidades.Vehiculo;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link VehiculoskFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link VehiculoskFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class VehiculoskFragment extends Fragment implements Response.Listener, Response.ErrorListener{
+public class VehiculoskFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -43,24 +38,15 @@ public class VehiculoskFragment extends Fragment implements Response.Listener, R
 
     private OnFragmentInteractionListener mListener;
 
-    RecyclerView recyclerVehiculos;
-    ArrayList<Vehiculo> listaVehiculos;
-    ProgressDialog dialog;
-    RequestQueue request;
-    JsonObjectRequest jsonObjectRequest;
+    private RecyclerView recyclerVehiculos;
+    private ArrayList<Vehiculo> listaVehiculos;
+    private ProgressDialog progress;
+    private RequestQueue request;
+    private JsonObjectRequest jsonObjectRequest;
 
     public VehiculoskFragment() {
         // Required empty public constructor
     }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment VehiculoskFragment.
-     */
 
     // TODO: Rename and change types and number of parameters
     public static VehiculoskFragment newInstance(String param1, String param2) {
@@ -86,22 +72,35 @@ public class VehiculoskFragment extends Fragment implements Response.Listener, R
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_vehiculosk,container,false);
-        listaVehiculos = new ArrayList<>();
+        /*listaVehiculos = new ArrayList<>();
         recyclerVehiculos = vista.findViewById(R.id.recicler_imagen_vehiculos);
         recyclerVehiculos.setLayoutManager(new LinearLayoutManager(this.getContext()));
         recyclerVehiculos.setHasFixedSize(true);
         request = Volley.newRequestQueue(getContext());
-        cargarWebService();
-
+        getVehiculos();*/
         return vista;
     }
 
-    private void cargarWebService() {
-        dialog = new ProgressDialog(getContext());
-        dialog.setMessage("Consultando...");
-        dialog.show();
-        String url = ServerConfig.URL_BASE + "getMarcas.php";
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,url,null,this,this);
+    private void getVehiculos() {
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Consultando...");
+        progress.show();
+        String url = ServerConfig.URL_BASE + "getVehiculos.php";
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(),"Error al cargar las marcas",Toast.LENGTH_LONG).show();
+                progress.hide();
+            }
+        });
+        RequestQueue request = Volley.newRequestQueue(getContext());
         request.add(jsonObjectRequest);
     }
 
@@ -129,26 +128,7 @@ public class VehiculoskFragment extends Fragment implements Response.Listener, R
         mListener = null;
     }
 
-    @Override
-    public void onErrorResponse(VolleyError error) {
 
-    }
-
-    @Override
-    public void onResponse(Object response) {
-
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

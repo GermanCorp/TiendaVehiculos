@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.RegistroVehiculoFragment"
     android:background="@color/fondoGris"
+    android:orientation="vertical"
     >
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Registrar nuevo Vehiculo"
+        android:textSize="18sp" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -16,16 +26,25 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            >
 
-            <TextView
-                android:id="@+id/textView2"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/ipt_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:text="Registrar nuevo Vehiculo"
-                android:textSize="18sp" />
+                >
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/imput_id"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Id"
+                    android:inputType="text"
+                    />
+
+            </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -38,7 +57,7 @@
                     android:id="@+id/txtMarca"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:text="Marca:"
                     android:textSize="18sp" />
 
@@ -60,7 +79,7 @@
                     android:id="@+id/txtModelo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:text="Modelo:"
                     android:textSize="18sp" />
 
@@ -82,12 +101,56 @@
                     android:id="@+id/txtTipo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
+                    android:layout_weight="2"
                     android:text="Tipo:"
                     android:textSize="18sp" />
 
                 <Spinner
                     android:id="@+id/spinnerTipo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="fill_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtTransmision"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Transmision:"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/spinnerTransmision"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="fill_horizontal"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtCombustible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="Combustible:"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/spinnerCombustible"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
@@ -100,15 +163,16 @@
                 android:layout_height="wrap_content"
                 app:errorEnabled="true"
                 app:counterEnabled="true"
-                app:counterMaxLength="10"
+                app:counterMaxLength="25"
                 >
 
                 <android.support.design.widget.TextInputEditText
+                    android:id="@+id/imput_color"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Color"
-                    android:inputType="numberDecimal"
-                    android:maxLength="4"
+                    android:inputType="textCapWords"
+                    android:maxLength="25"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -123,6 +187,7 @@
                 >
 
                 <android.support.design.widget.TextInputEditText
+                    android:id="@+id/imput_anio"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Año"
@@ -142,6 +207,7 @@
                 >
 
                 <android.support.design.widget.TextInputEditText
+                    android:id="@+id/imput_cilindraje"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Cilindraje"
@@ -151,17 +217,84 @@
 
             </android.support.design.widget.TextInputLayout>
 
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/ipt_precio_venta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/imput_precio_venta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Precio de Venta"
+                    android:inputType="number"
+                    />
+            </android.support.design.widget.TextInputLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:orientation="horizontal"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="2"
+                    android:weightSum="2"
+                    >
+                    <Button
+                        android:id="@+id/imagen_carr_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/carro_predeterminado"
+                        />
+                    <ImageView
+                        android:id="@+id/imagen_carr_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/carro_predeterminado"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_weight="2"
+                    android:weightSum="2"
+                    >
+                    <ImageView
+                        android:id="@+id/imagen_carr_3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/carro_predeterminado"
+                        />
+                    <ImageView
+                        android:id="@+id/imagen_carr_4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@drawable/carro_predeterminado"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
             <Button
                 android:id="@+id/btnGuardar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Guardar"
+                android:text="Registrar"
                 android:background="@color/colorAccent"
                 android:textColor="@color/text_light"
                 />
 
         </LinearLayout>
+
     </ScrollView>
 
-</FrameLayout>
+</LinearLayout>
