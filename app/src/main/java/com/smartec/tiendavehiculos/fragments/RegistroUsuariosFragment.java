@@ -2,6 +2,7 @@ package com.smartec.tiendavehiculos.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -45,15 +46,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.Manifest.permission.CAMERA;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 import static android.app.Activity.RESULT_OK;
-import static android.support.v4.content.PermissionChecker.checkSelfPermission;
+
 
 
 public class RegistroUsuariosFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -69,6 +69,7 @@ public class RegistroUsuariosFragment extends Fragment {
     private final int COD_FOTO = 20;
     Bitmap bitmap;
     File fileImagen;
+    private ProgressDialog progressDialog;
 
 
     ImageView fotoUsuario;
@@ -139,90 +140,88 @@ public class RegistroUsuariosFragment extends Fragment {
             }
         });
 
-      /*if(validaPermisos()){
-            botonRegistrar.setEnabled(true);
 
-        }else{
-            botonRegistrar.setEnabled(false);
-        }
-*/
         return vista;
     }
-/*
-    private boolean validaPermisos(){
-        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.M){
-            return  true;
-        }
 
-        if((getContext().checkSelfPermission(CAMERA)== PackageManager.PERMISSION_GRANTED)&&
-                (getContext().checkSelfPermission(WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED)){
-            return true;
-        }
+    private void cargarWebService() {
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Registrando");
+        progressDialog.show();
 
-        if((shouldShowRequestPermissionRationale(CAMERA))|| (shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE))){
-            cargarDialogoRecomendacion();
-        }
-        else{
-            requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE,CAMERA},100);
-        }
+        String url = ServerConfig.URL_BASE+"registroUsuario.php?";
 
-
-        return  false;
-    }
-
-    private void cargarDialogoRecomendacion() {
-        AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
-        dialogo.setTitle("Permisos Desactivados");
-        dialogo.setMessage("Debe aceptar los permisos para el correcto funcionamiento de la app");
-
-        dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE,CAMERA},100);
-            }
-        });
-        dialogo.show();
-    }
+            public void onResponse(String response) {
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                if(response.trim().equalsIgnoreCase("registra")) {
+                    campoNombres.setText("");
+                    campoApellidos.setText("");
+                    campoDireccion.setText("");
+                    campoTelefono.setText("");
+                    campoCelular.setText("");
+                    campoEmail.setText("");
+                    campoNombreUsuario.setText("");
+                    campoContrasenia.setText("");
 
-        if(requestCode==100){
-            if(grantResults.length==2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[1] == PackageManager.PERMISSION_GRANTED){
-                botonRegistrar.setEnabled(true);
-            }else{
-                solicitarPermisosManual();
-            }
-        }
-    }
- private void solicitarPermisosManual() {
-
-        final CharSequence[] opciones = {"si",  "no"};
-        final AlertDialog.Builder alertOpciones = new AlertDialog.Builder(getContext());
-        alertOpciones.setTitle("Desea configurar los permisos de forma manual?");
-        alertOpciones.setItems(opciones, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if(opciones[i].equals("si")){
-                    Intent intent = new Intent();
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri = Uri.fromParts("package",getContext().getPackageName(),null);
-                    intent.setData(uri);
-                    startActivity(intent);
-                }else{
-                   Toast.makeText(getContext(),"Los permisos no fueron aceptados",Toast.LENGTH_SHORT).show();
-                    dialogInterface.dismiss();
+                    Toast.makeText(getContext(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
+                    //}else {
+                    //  Toast.makeText(getContext(), "No se ha registrado con exito", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
 
-        alertOpciones.show();
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(),"No se ha podido conectar" + error,Toast.LENGTH_SHORT).show();
+            }
+        }
 
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                String nombres =campoNombres.getText().toString();
+                String apellidos = campoApellidos.getText().toString();
+                String email = campoEmail.getText().toString();
+                String telefono = campoTelefono.getText().toString();
+                String celular = campoCelular.getText().toString();
+                String nombreUsuario = campoNombreUsuario.getText().toString();
+                String contrasena =campoContrasenia.getText().toString();
+                String imagen = convertirImagenString(bitmap);
+
+                Map<String, String> parametros = new HashMap<>();
+                parametros.put("nombres",nombres);
+                parametros.put("apellidos",apellidos);
+                parametros.put("telefono",telefono);
+                parametros.put("celular",celular);
+                parametros.put("email",email);
+                parametros.put("nombreUsuario",nombreUsuario);
+                parametros.put("contrasena",contrasena);
+                parametros.put("imagen",imagen);
+
+                return parametros;
+
+            }
+
+        };
+
+        requestQueue.add(stringRequest );
+        progressDialog.hide();
 
     }
-*/
+
+    private String convertirImagenString(Bitmap bitmap) {
+
+        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,arrayOutputStream);
+        byte[] imagenByte = arrayOutputStream .toByteArray();
+        String imagenString = Base64.encodeToString(imagenByte,Base64.DEFAULT);
+
+        return imagenString;
+    }
+
 
     private void cargarImagen(){
         final CharSequence[] opciones = {"Tomar Foto", "Cargar Imagen", "Cancelar"};
@@ -283,87 +282,6 @@ public class RegistroUsuariosFragment extends Fragment {
             startActivityForResult(intent,COD_FOTO);
         }
 
-    private void cargarWebService() {
-
-        String url = ServerConfig.URL_BASE+"registroUsuario.php?";
-
-        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-
-                //if(response.trim().equalsIgnoreCase("registra")) {
-                    campoNombres.setText("");
-                    campoApellidos.setText("");
-                    campoDireccion.setText("");
-                    campoTelefono.setText("");
-                    campoCelular.setText("");
-                    campoEmail.setText("");
-                    campoNombreUsuario.setText("");
-                    campoContrasenia.setText("");
-
-                    Toast.makeText(getContext(),"Registro Exitoso",Toast.LENGTH_SHORT).show();
-                //}else {
-                  //  Toast.makeText(getContext(), "No se ha registrado con exito", Toast.LENGTH_SHORT).show();
-
-            }
-
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(),"No se ha podido conectar" + error,Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        ){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-
-
-                    String nombres =campoNombres.getText().toString();
-                    String apellidos = campoApellidos.getText().toString();
-                    String email = campoEmail.getText().toString();
-                    String telefono = campoTelefono.getText().toString();
-                    String celular = campoCelular.getText().toString();
-                    String nombreUsuario = campoNombreUsuario.getText().toString();
-                    String contraseniaa =campoContrasenia.getText().toString();
-                    //String direccion = campoDireccion.getText().toString();
-
-
-                    String imagen = convertirImagenString(bitmap);
-
-
-
-                    Map<String, String> parametros = new HashMap<>();
-                    parametros.put("nombres",nombres);
-                    parametros.put("apellidos",apellidos);
-                    //parametros.put("direccion",direccion);
-                    parametros.put("telefono",telefono);
-                    parametros.put("celular",celular);
-                    parametros.put("email",email);
-                    parametros.put("nombreUsuario",nombreUsuario);
-                    parametros.put("contrasenia",contraseniaa);
-
-
-                    parametros.put("imagen",imagen);
-
-
-
-                    return parametros;
-            }
-        };
-
-        requestQueue.add(stringRequest );
-    }
-
-    private String convertirImagenString(Bitmap bitmap) {
-
-        ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,100,arrayOutputStream);
-        byte[] imagenByte = arrayOutputStream .toByteArray();
-        String imagenString = Base64.encodeToString(imagenByte,Base64.DEFAULT);
-
-        return imagenString;
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

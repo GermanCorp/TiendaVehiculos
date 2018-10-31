@@ -131,9 +131,7 @@
                 android:text="@string/registrar"
                 android:textColor="@color/text_light" />
 
-
         </LinearLayout>
-
 
     </ScrollView>
 
