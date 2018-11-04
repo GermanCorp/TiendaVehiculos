@@ -1,12 +1,11 @@
 package com.smartec.tiendavehiculos.fragments;
 
-import android.annotation.SuppressLint;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaScannerConnection;
@@ -15,8 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -28,7 +25,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -145,17 +141,17 @@ public class RegistroUsuariosFragment extends Fragment {
     }
 
     private void cargarWebService() {
-        progressDialog = new ProgressDialog(getContext());
+       /* progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Registrando");
         progressDialog.show();
-
+*/
         String url = ServerConfig.URL_BASE+"registroUsuario.php?";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                if(response.trim().equalsIgnoreCase("registra")) {
+                //if(response.trim().equalsIgnoreCase("registra")) {
                     campoNombres.setText("");
                     campoApellidos.setText("");
                     campoDireccion.setText("");
@@ -169,7 +165,6 @@ public class RegistroUsuariosFragment extends Fragment {
                     //}else {
                     //  Toast.makeText(getContext(), "No se ha registrado con exito", Toast.LENGTH_SHORT).show();
                 }
-            }
 
         }, new Response.ErrorListener() {
             @Override
@@ -189,6 +184,7 @@ public class RegistroUsuariosFragment extends Fragment {
                 String celular = campoCelular.getText().toString();
                 String nombreUsuario = campoNombreUsuario.getText().toString();
                 String contrasena =campoContrasenia.getText().toString();
+                String direccion = campoDireccion.getText().toString();
                 String imagen = convertirImagenString(bitmap);
 
                 Map<String, String> parametros = new HashMap<>();
@@ -199,6 +195,7 @@ public class RegistroUsuariosFragment extends Fragment {
                 parametros.put("email",email);
                 parametros.put("nombreUsuario",nombreUsuario);
                 parametros.put("contrasena",contrasena);
+                parametros.put("direccion",direccion);
                 parametros.put("imagen",imagen);
 
                 return parametros;
@@ -208,7 +205,7 @@ public class RegistroUsuariosFragment extends Fragment {
         };
 
         requestQueue.add(stringRequest );
-        progressDialog.hide();
+        //progressDialog.hide();
 
     }
 

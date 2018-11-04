@@ -1,5 +1,6 @@
 package com.smartec.tiendavehiculos;
 
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,7 +20,11 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-public class Main2Activity extends AppCompatActivity {
+import com.smartec.tiendavehiculos.fragments.RegistroUsuariosFragment;
+import com.smartec.tiendavehiculos.fragments.RegistroVehiculoFragment;
+
+public class Main2Activity extends AppCompatActivity implements RegistroUsuariosFragment.OnFragmentInteractionListener,
+        RegistroVehiculoFragment.OnFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -90,6 +95,11 @@ public class Main2Activity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -107,11 +117,17 @@ public class Main2Activity extends AppCompatActivity {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
+        public static Fragment newInstance(int sectionNumber) {
+           Fragment  fragment = null;
+
+           switch (sectionNumber){
+               case 1:
+                   fragment = new RegistroUsuariosFragment();
+                   break;
+               case 2:
+                   fragment = new RegistroVehiculoFragment();
+                   break;
+           }
             return fragment;
         }
 
@@ -145,7 +161,7 @@ public class Main2Activity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return 2;
         }
     }
 }
