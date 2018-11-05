@@ -27,4 +27,21 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="imagen">imagen</string>
+    <string name="nombresPerfil">Nombres:</string>
+    <string name="telefonoPerfil">Telefono:</string>
+    <string name="direccionPerfil">Direccion:</string>
+    <string name="apellidosPerfil">Apellidos:</string>
+    <string name="e_mailPerfil">E-mail:</string>
+    <string name="contrase_aPerfil">Contraseña:</string>
+    <string name="nombre_de_usuarioPerfil">Nombre de Usuario:</string>
+    <string name="celularPerfil">Celular:</string>
+    <string name="telefonoperfil" />
+    <string name="direccionperfil">TextView</string>
+    <string name="emailperfil">TextView</string>
+    <string name="nombreUsuarioperfil">TextView</string>
+    <string name="nombresperfil">TextView</string>
+    <string name="apellidosperfil">TextView</string>
+    <string name="celularperfil">TextView</string>
+    <string name="contrasenaperfil">TextView</string>
 </resources>

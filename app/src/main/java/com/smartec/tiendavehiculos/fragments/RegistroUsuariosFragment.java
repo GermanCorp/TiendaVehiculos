@@ -17,6 +17,8 @@ import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -78,6 +80,9 @@ public class RegistroUsuariosFragment extends Fragment {
 
 
     private OnFragmentInteractionListener mListener;
+
+
+
 
     public RegistroUsuariosFragment() {
         // Required empty public constructor
