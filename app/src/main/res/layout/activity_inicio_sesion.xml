@@ -16,7 +16,8 @@
         android:id="@+id/imageView2"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        app:srcCompat="?android:attr/textSelectHandleRight" />
+        app:srcCompat="?android:attr/textSelectHandleRight"
+        android:contentDescription="@string/todo" />
 
         <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -24,11 +25,12 @@
         android:textColorHint="@color/text_light"
         >
 
-    <android.support.design.widget.TextInputEditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Usuario"
-        android:singleLine="false" />
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/textInputUsuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/usuario"
+                android:singleLine="false" />
 
 </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
@@ -36,21 +38,23 @@
         android:layout_height="wrap_content"
         android:textColorHint="@color/text_light"
         >
+
         <android.support.design.widget.TextInputEditText
+            android:id="@+id/textInputPasword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Contraseña"
-            />
+            android:hint="@string/contrase_a" />
     </android.support.design.widget.TextInputLayout>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonIniciarSesion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Iniciar Sesión"
-        android:background="@color/colorAccent"
-        android:textColor="@color/text_light"
         android:layout_marginTop="20dp"
-        />
+        android:background="@color/colorAccent"
+        android:text="@string/iniciar_sesi_n"
+        android:textColor="@color/text_light" />
+
+
 
 </LinearLayout>

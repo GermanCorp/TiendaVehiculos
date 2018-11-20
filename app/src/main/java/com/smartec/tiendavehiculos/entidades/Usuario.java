@@ -11,20 +11,28 @@ public class Usuario
     private String telefono;
     private String contrasenia;
     private String email;
+    private String fotoPerfil;
 
-
-    public Usuario(Integer id, String nombres, String apellidos, String direccion, String nombreUsuario, String celular, String telefono, String contrasenia, String email) {
-        this.id = id;
-        this.nombres = nombres;
-        this.apellidos = apellidos;
-        this.direccion = direccion;
-        this.nombreUsuario = nombreUsuario;
-        this.celular = celular;
-        this.telefono = telefono;
-        this.contrasenia = contrasenia;
-        this.email = email;
+    public String getFotoPerfil() {
+        return fotoPerfil;
     }
 
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+
+    /* public Usuario(Integer id, String nombres, String apellidos, String direccion, String nombreUsuario, String celular, String telefono, String contrasenia, String email) {
+            this.id = id;
+            this.nombres = nombres;
+            this.apellidos = apellidos;
+            this.direccion = direccion;
+            this.nombreUsuario = nombreUsuario;
+            this.celular = celular;
+            this.telefono = telefono;
+            this.contrasenia = contrasenia;
+            this.email = email;
+        }
+    */
     public Integer getId() {
         return id;
     }
@@ -96,4 +104,5 @@ public class Usuario
     public void setEmail(String email) {
         this.email = email;
     }
+
 }

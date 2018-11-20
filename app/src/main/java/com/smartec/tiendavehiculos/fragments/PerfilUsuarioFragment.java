@@ -1,14 +1,39 @@
 package com.smartec.tiendavehiculos.fragments;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.smartec.tiendavehiculos.InicioSesionActivity;
 import com.smartec.tiendavehiculos.R;
+import com.smartec.tiendavehiculos.ServerConfig;
+import com.smartec.tiendavehiculos.entidades.Modelo;
+import com.smartec.tiendavehiculos.entidades.Usuario;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,21 +52,22 @@ public class PerfilUsuarioFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    TextView campoNombres, campoApellidos,campoDireccion, campoEmail, campoTelefono, campoCelular,campoNombreUsuario, campoContrasenia;
+    ImageView fotoUsuario;
+    Button botonEditar;
+    StringRequest stringRequest;
+    RequestQueue requestQueue;
+
+
 
     private OnFragmentInteractionListener mListener;
 
     public PerfilUsuarioFragment() {
         // Required empty public constructor
+
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PerfilUsuarioFragment.
-     */
+
     // TODO: Rename and change types and number of parameters
     public static PerfilUsuarioFragment newInstance(String param1, String param2) {
         PerfilUsuarioFragment fragment = new PerfilUsuarioFragment();
@@ -59,13 +85,150 @@ public class PerfilUsuarioFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_perfil_usuario, container, false);
+        View vista = inflater.inflate(R.layout.fragment_perfil_usuario, container, false);
+
+        fotoUsuario =  (ImageView)vista.findViewById(R.id.imagenUsuario);
+        campoNombres = (TextView) vista.findViewById(R.id.nombres);
+        campoApellidos= (TextView) vista.findViewById(R.id.apellidos);
+        campoDireccion =  (TextView) vista.findViewById(R.id.direccion);
+        campoEmail = (TextView) vista.findViewById(R.id.email);
+        campoCelular = (TextView) vista.findViewById(R.id.celular);
+        campoContrasenia = (TextView) vista.findViewById(R.id.contrasena);
+        campoTelefono = (TextView) vista.findViewById(R.id.telefono);
+        campoNombreUsuario = (TextView) vista.findViewById(R.id.nombreUsuario);
+        botonEditar = (Button) vista.findViewById(R.id.botoneditar);
+
+
+        requestQueue = Volley.newRequestQueue(getContext());
+
+
+        consultaUsuario();
+        botonEditar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
+        return vista;
+
+    }
+
+    private void consultaUsuario() {
+        String url = ServerConfig.URL_BASE+"consultarUsuario.php?";
+
+        stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(response);
+                    llenarUsuario(jsonObject);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                          }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(),"No se ha podido conectar" + error,Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        ){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+               // int idUsuario = getId();
+                int idUsuario = 1;
+                String id = Integer.toString(idUsuario);
+
+
+                Map<String, String> parametros = new HashMap<>();
+                parametros.put("id",id);
+
+                return parametros;
+
+            }
+
+        };
+
+        requestQueue.add(stringRequest );
+
+
+    }
+
+    private void llenarUsuario(JSONObject jsonObject) {
+        Usuario usuario = null;
+        JSONArray json = jsonObject.optJSONArray("usuarios");
+
+        try {
+            for (int i = 0; i < json.length(); i++) {
+                usuario = new Usuario();
+                JSONObject object = null;
+                object = json.getJSONObject(i);
+
+                usuario.setId(object.optInt("id"));
+                usuario.setNombres(object.optString("nombres"));
+                usuario.setApellidos(object.optString("apellidos"));
+                usuario.setDireccion(object.optString("direccion"));
+                usuario.setTelefono(object.optString("telefono"));
+                usuario.setCelular(object.optString("celular"));
+                usuario.setEmail(object.optString("email"));
+                usuario.setNombreUsuario(object.optString("nombreUsuario"));
+                usuario.setContrasenia(object.optString("pasword"));
+                usuario.setFotoPerfil(object.optString("fotoPerfil"));
+
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+        campoNombres.setText(usuario.getNombres());
+        campoApellidos.setText(usuario.getApellidos());
+        campoDireccion.setText(usuario.getDireccion());
+        campoTelefono.setText(usuario.getTelefono());
+        campoCelular.setText(usuario.getCelular());
+        campoEmail.setText(usuario.getEmail());
+        campoNombreUsuario.setText(usuario.getNombreUsuario());
+        campoContrasenia.setText(usuario.getContrasenia());
+
+
+        String urlImagen =ServerConfig.URL_BASE+"usuario.getFotoPerfil()";
+        cargarWebServiceImagen(urlImagen);
+
+    }
+
+    private void cargarWebServiceImagen(String urlImagen) {
+        urlImagen = urlImagen.replace(" ","%20");
+
+        ImageRequest imageRequest = new ImageRequest(urlImagen, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                    fotoUsuario.setImageBitmap(response);
+            }
+        }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }
+
+        );
+        requestQueue.add(imageRequest);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -92,16 +255,7 @@ public class PerfilUsuarioFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

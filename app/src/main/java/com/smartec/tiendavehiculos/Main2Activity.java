@@ -23,9 +23,9 @@ import android.widget.TextView;
 import com.smartec.tiendavehiculos.fragments.RegistroUsuariosFragment;
 import com.smartec.tiendavehiculos.fragments.RegistroVehiculoFragment;
 
-public class Main2Activity extends AppCompatActivity implements RegistroUsuariosFragment.OnFragmentInteractionListener,
-        RegistroVehiculoFragment.OnFragmentInteractionListener {
-
+public class Main2Activity extends AppCompatActivity  {
+//implements RegistroUsuariosFragment.OnFragmentInteractionListener,
+//        RegistroVehiculoFragment.OnFragmentInteractionListener
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -95,10 +95,7 @@ public class Main2Activity extends AppCompatActivity implements RegistroUsuarios
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
 
-    }
 
     /**
      * A placeholder fragment containing a simple view.
@@ -122,10 +119,10 @@ public class Main2Activity extends AppCompatActivity implements RegistroUsuarios
 
            switch (sectionNumber){
                case 1:
-                   fragment = new RegistroUsuariosFragment();
+                   //fragment = new RegistroUsuariosFragment();
                    break;
                case 2:
-                   fragment = new RegistroVehiculoFragment();
+                   //fragment = new RegistroVehiculoFragment();
                    break;
            }
             return fragment;

@@ -17,8 +17,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,7 +67,6 @@ public class RegistroUsuariosFragment extends Fragment {
     Bitmap bitmap;
     File fileImagen;
     private ProgressDialog progressDialog;
-
 
     ImageView fotoUsuario;
     TextInputEditText campoNombres, campoApellidos,campoDireccion, campoEmail, campoTelefono, campoCelular,campoNombreUsuario, campoContrasenia;
@@ -130,7 +128,7 @@ public class RegistroUsuariosFragment extends Fragment {
         botonRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                cargarWebService();
+                registrarUsuario();
             }
         });
 
@@ -145,11 +143,11 @@ public class RegistroUsuariosFragment extends Fragment {
         return vista;
     }
 
-    private void cargarWebService() {
-       /* progressDialog = new ProgressDialog(getContext());
-        progressDialog.setMessage("Registrando");
-        progressDialog.show();
-*/
+    private void registrarUsuario() {
+        /*progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage("Registrando...");
+        progressDialog.show();*/
+
         String url = ServerConfig.URL_BASE+"registroUsuario.php?";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
@@ -165,6 +163,8 @@ public class RegistroUsuariosFragment extends Fragment {
                     campoEmail.setText("");
                     campoNombreUsuario.setText("");
                     campoContrasenia.setText("");
+                    fotoUsuario.setImageResource(R.mipmap.ic_launcher);
+
 
                     Toast.makeText(getContext(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
                     //}else {
@@ -208,16 +208,18 @@ public class RegistroUsuariosFragment extends Fragment {
             }
 
         };
-
-        requestQueue.add(stringRequest );
         //progressDialog.hide();
+        requestQueue.add(stringRequest );
+
 
     }
+
 
     private String convertirImagenString(Bitmap bitmap) {
 
         ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG,100,arrayOutputStream);
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100
+                ,arrayOutputStream);
         byte[] imagenByte = arrayOutputStream .toByteArray();
         String imagenString = Base64.encodeToString(imagenByte,Base64.DEFAULT);
 

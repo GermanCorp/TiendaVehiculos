@@ -32,12 +32,12 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/etiquetaNombres"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/nombresPerfil" />
+                <TextView
+                    android:id="@+id/etiquetaNombres"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/nombresPerfil" />
 
                 <TextView
                     android:id="@+id/nombres"
@@ -53,12 +53,12 @@
                 android:orientation="horizontal">
 
 
-            <TextView
-                android:id="@+id/etiquetaApellidos"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/apellidosPerfil" />
+                <TextView
+                    android:id="@+id/etiquetaApellidos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/apellidosPerfil" />
 
                 <TextView
                     android:id="@+id/apellidos"
@@ -73,11 +73,11 @@
                 android:orientation="horizontal">
 
                 <TextView
-                android:id="@+id/EtiquetaUsuario"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/nombre_de_usuarioPerfil" />
+                    android:id="@+id/EtiquetaUsuario"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/nombre_de_usuarioPerfil" />
 
                 <TextView
                     android:id="@+id/nombreUsuario"
@@ -111,12 +111,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
-            <TextView
-                android:id="@+id/etiquetaContrasena"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/contrase_aPerfil" />
+                <TextView
+                    android:id="@+id/etiquetaContrasena"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/contrase_aPerfil" />
 
                 <TextView
                     android:id="@+id/contrasena"
@@ -130,12 +130,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
-            <TextView
-                android:id="@+id/etiquetaDireccion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/direccionPerfil" />
+                <TextView
+                    android:id="@+id/etiquetaDireccion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/direccionPerfil" />
 
                 <TextView
                     android:id="@+id/direccion"
@@ -149,12 +149,12 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/etiquetaCelular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/celularPerfil" />
+                <TextView
+                    android:id="@+id/etiquetaCelular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/celularPerfil" />
 
                 <TextView
                     android:id="@+id/celular"
@@ -165,25 +165,31 @@
             </LinearLayout>
 
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/etiquetaTelefono"
+                <TextView
+                    android:id="@+id/etiquetaTelefono"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="@string/telefonoPerfil" />
+
+                <TextView
+                    android:id="@+id/telefono"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/telefonoperfil" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/botoneditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="@string/telefonoPerfil" />
-
-            <TextView
-                android:id="@+id/telefono"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/telefonoperfil" />
-        </LinearLayout>
+                android:text="Editar" />
 
 
         </LinearLayout>
