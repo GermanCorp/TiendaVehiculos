@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:padding="30dp"
     android:gravity="center"
+    android:background="@color/fondoGris"
     tools:context=".fragments.PerfilUsuarioFragment">
 
     <ScrollView
@@ -37,13 +38,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:text="@string/nombresPerfil" />
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/nombresPerfil"
+
+                    />
 
                 <TextView
                     android:id="@+id/nombres"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:layout_gravity="center"/>
             </LinearLayout>
 
 
@@ -58,6 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
+                    android:textColor="@color/colorPrimary"
                     android:text="@string/apellidosPerfil" />
 
                 <TextView
@@ -77,6 +83,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
+                    android:textColor="@color/colorPrimary"
                     android:text="@string/nombre_de_usuarioPerfil" />
 
                 <TextView
@@ -97,13 +104,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
+                    android:textColor="@color/colorPrimary"
                     android:text="@string/e_mailPerfil" />
 
                 <TextView
                     android:id="@+id/email"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    />
 
             </LinearLayout>
 
@@ -116,6 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
+                    android:textColor="@color/colorPrimary"
                     android:text="@string/contrase_aPerfil" />
 
                 <TextView
@@ -135,6 +145,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
+                    android:textColor="@color/colorPrimary"
                     android:text="@string/direccionPerfil" />
 
                 <TextView
@@ -154,6 +165,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
+                    android:textColor="@color/colorPrimary"
                     android:text="@string/celularPerfil" />
 
                 <TextView
@@ -175,6 +187,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
+                    android:textColor="@color/colorPrimary"
                     android:text="@string/telefonoPerfil" />
 
                 <TextView
@@ -189,7 +202,8 @@
                 android:id="@+id/botoneditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Editar" />
+                android:gravity="center"
+                android:text="@string/editar" />
 
 
         </LinearLayout>

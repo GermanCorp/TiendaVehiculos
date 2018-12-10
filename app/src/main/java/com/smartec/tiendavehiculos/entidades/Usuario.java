@@ -1,108 +1,94 @@
 package com.smartec.tiendavehiculos.entidades;
 
-public class Usuario
-{
-    private Integer id;
-    private String nombres;
-    private String apellidos;
-    private String direccion;
-    private String nombreUsuario;
-    private String celular;
-    private String telefono;
-    private String contrasenia;
-    private String email;
-    private String fotoPerfil;
+public class Usuario {
+    private static Integer id;
+    private static String nombres;
+    private static String apellidos;
+    private static String direccion;
+    private static String nombreUsuario;
+    private static String celular;
+    private static String telefono;
+    private static String contrasenia;
+    private static String email;
+    private static String fotoPerfil;
 
-    public String getFotoPerfil() {
-        return fotoPerfil;
-    }
-
-    public void setFotoPerfil(String fotoPerfil) {
-        this.fotoPerfil = fotoPerfil;
-    }
-
-    /* public Usuario(Integer id, String nombres, String apellidos, String direccion, String nombreUsuario, String celular, String telefono, String contrasenia, String email) {
-            this.id = id;
-            this.nombres = nombres;
-            this.apellidos = apellidos;
-            this.direccion = direccion;
-            this.nombreUsuario = nombreUsuario;
-            this.celular = celular;
-            this.telefono = telefono;
-            this.contrasenia = contrasenia;
-            this.email = email;
-        }
-    */
-    public Integer getId() {
+    public static Integer getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public static void setId(Integer id) {
+        Usuario.id = id;
     }
 
-    public String getNombres() {
+    public static String getNombres() {
         return nombres;
     }
 
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
+    public static void setNombres(String nombres) {
+        Usuario.nombres = nombres;
     }
 
-    public String getApellidos() {
+    public static String getApellidos() {
         return apellidos;
     }
 
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
+    public static void setApellidos(String apellidos) {
+        Usuario.apellidos = apellidos;
     }
 
-    public String getDireccion() {
+    public static String getDireccion() {
         return direccion;
     }
 
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
+    public static void setDireccion(String direccion) {
+        Usuario.direccion = direccion;
     }
 
-    public String getNombreUsuario() {
+    public static String getNombreUsuario() {
         return nombreUsuario;
     }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
+    public static void setNombreUsuario(String nombreUsuario) {
+        Usuario.nombreUsuario = nombreUsuario;
     }
 
-    public String getCelular() {
+    public static String getCelular() {
         return celular;
     }
 
-    public void setCelular(String celular) {
-        this.celular = celular;
+    public static void setCelular(String celular) {
+        Usuario.celular = celular;
     }
 
-    public String getTelefono() {
+    public static String getTelefono() {
         return telefono;
     }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public static void setTelefono(String telefono) {
+        Usuario.telefono = telefono;
     }
 
-    public String getContrasenia() {
+    public static String getContrasenia() {
         return contrasenia;
     }
 
-    public void setContrasenia(String contrasenia) {
-        this.contrasenia = contrasenia;
+    public static void setContrasenia(String contrasenia) {
+        Usuario.contrasenia = contrasenia;
     }
 
-    public String getEmail() {
+    public static String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public static void setEmail(String email) {
+        Usuario.email = email;
     }
 
+    public static String getFotoPerfil() {
+        return fotoPerfil;
+    }
+
+    public static void setFotoPerfil(String fotoPerfil) {
+        Usuario.fotoPerfil = fotoPerfil;
+    }
 }

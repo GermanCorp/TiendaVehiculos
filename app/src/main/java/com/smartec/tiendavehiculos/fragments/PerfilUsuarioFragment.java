@@ -1,11 +1,17 @@
 package com.smartec.tiendavehiculos.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +29,7 @@ import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.smartec.tiendavehiculos.InicioSesionActivity;
+import com.smartec.tiendavehiculos.MainActivity;
 import com.smartec.tiendavehiculos.R;
 import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.entidades.Modelo;
@@ -57,6 +64,9 @@ public class PerfilUsuarioFragment extends Fragment {
     Button botonEditar;
     StringRequest stringRequest;
     RequestQueue requestQueue;
+    public static final String idUsuario = "";
+    Usuario usuario = new Usuario();
+
 
 
 
@@ -109,15 +119,54 @@ public class PerfilUsuarioFragment extends Fragment {
         requestQueue = Volley.newRequestQueue(getContext());
 
 
+
         consultaUsuario();
         botonEditar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                /*
+               Bundle bundle = new Bundle();
+               Intent intent = new Intent(getContext(),RegistroUsuariosFragment.class);
+               startActivity(intent,bundle);
+                 */
+
+                FragmentTransaction trans = getFragmentManager().beginTransaction();
+                /*
+                 * IMPORTANT: We use the "root frame" defined in
+                 * "root_fragment.xml" as the reference to replace fragment
+                 */
+                trans.replace(R.id.fragment_perfil_usuario, new RegistroUsuariosFragment());
+                /*
+                 * IMPORTANT: The following lines allow us to add the fragment
+                 * to the stack and return to it later, by pressing back
+                 */
+                trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                trans.addToBackStack(null);
+
+                trans.commit();
+                Toast.makeText(getContext(),"Editar" ,Toast.LENGTH_SHORT).show();
 
             }
+
         });
 
+/*
+        //extraemos el drawable en un bitmap
+        Drawable originalDrawable = getResources().getDrawable(R.drawable.ic_menu_camera);
+        Bitmap originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
 
+        //creamos el drawable redondeado
+        RoundedBitmapDrawable roundedDrawable =
+                RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
+
+        //asignamos el CornerRadius
+        roundedDrawable.setCornerRadius(originalBitmap.getHeight());
+
+        ImageView imageView = (ImageView) vista.findViewById(R.id.imagenUsuario);
+
+        imageView.setImageDrawable(roundedDrawable);
+
+*/
         return vista;
 
     }
@@ -149,13 +198,8 @@ public class PerfilUsuarioFragment extends Fragment {
         ){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-               // int idUsuario = getId();
-                int idUsuario = 1;
-                String id = Integer.toString(idUsuario);
-
-
                 Map<String, String> parametros = new HashMap<>();
-                parametros.put("id",id);
+                parametros.put("id",usuario.getId().toString());//""+usuario.getId()
 
                 return parametros;
 
@@ -169,23 +213,23 @@ public class PerfilUsuarioFragment extends Fragment {
     }
 
     private void llenarUsuario(JSONObject jsonObject) {
-        Usuario usuario = null;
+       // Usuario usuario = null;
         JSONArray json = jsonObject.optJSONArray("usuarios");
 
         try {
             for (int i = 0; i < json.length(); i++) {
-                usuario = new Usuario();
+               // usuario = new Usuario();
                 JSONObject object = null;
                 object = json.getJSONObject(i);
 
-                usuario.setId(object.optInt("id"));
+                //usuario.setId(object.optInt("id"));
                 usuario.setNombres(object.optString("nombres"));
                 usuario.setApellidos(object.optString("apellidos"));
+                usuario.setNombreUsuario(object.optString("nombreUsuario"));
                 usuario.setDireccion(object.optString("direccion"));
                 usuario.setTelefono(object.optString("telefono"));
                 usuario.setCelular(object.optString("celular"));
                 usuario.setEmail(object.optString("email"));
-                usuario.setNombreUsuario(object.optString("nombreUsuario"));
                 usuario.setContrasenia(object.optString("pasword"));
                 usuario.setFotoPerfil(object.optString("fotoPerfil"));
 
@@ -207,7 +251,7 @@ public class PerfilUsuarioFragment extends Fragment {
         campoContrasenia.setText(usuario.getContrasenia());
 
 
-        String urlImagen =ServerConfig.URL_BASE+"usuario.getFotoPerfil()";
+        String urlImagen =ServerConfig.URL_BASE+usuario.getFotoPerfil();
         cargarWebServiceImagen(urlImagen);
 
     }

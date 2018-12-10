@@ -153,8 +153,7 @@ public class RegistroUsuariosFragment extends Fragment {
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
-                //if(response.trim().equalsIgnoreCase("registra")) {
+               // if(response.trim().equals("registra")) {
                     campoNombres.setText("");
                     campoApellidos.setText("");
                     campoDireccion.setText("");
@@ -167,8 +166,9 @@ public class RegistroUsuariosFragment extends Fragment {
 
 
                     Toast.makeText(getContext(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
-                    //}else {
-                    //  Toast.makeText(getContext(), "No se ha registrado con exito", Toast.LENGTH_SHORT).show();
+                    /*}else {
+                    Toast.makeText(getContext(), "No se ha registrado con exito", Toast.LENGTH_SHORT).show();
+                }*/
                 }
 
         }, new Response.ErrorListener() {

@@ -5,7 +5,6 @@ import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -16,8 +15,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.smartec.tiendavehiculos.entidades.Modelo;
 import com.smartec.tiendavehiculos.entidades.Usuario;
+import com.smartec.tiendavehiculos.fragments.PerfilUsuarioFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +31,9 @@ public class InicioSesionActivity extends AppCompatActivity {
     TextInputEditText txtUsuario, txtContrasena;
     StringRequest stringRequest;
     RequestQueue requestQueue;
+    String idUsuario;
+    Usuario usuario =  new Usuario();
+
 
 
     @Override
@@ -50,7 +52,7 @@ public class InicioSesionActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 consultarUsuario();
-
+                
             }
         });
 
@@ -66,17 +68,35 @@ public class InicioSesionActivity extends AppCompatActivity {
                 txtUsuario.setText("");
                 txtContrasena.setText("");
 
+
+
                 JSONObject jsonObject = null;
                 try {
                     jsonObject = new JSONObject(response);
-                    establecerIdUsuario(jsonObject);
+                    JSONArray json = jsonObject.optJSONArray("usuarios");
+                    if (json.length()<= 0){
+                        Toast.makeText(getApplicationContext(), "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
+                    }else{
+
+
+                        for (int i = 0; i < json.length(); i++) {
+                            JSONObject object = null;
+                            object = json.getJSONObject(i);
+
+                            usuario.setId(object.optInt("idUsuarios"));
+                        }
+
+                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                        startActivity(intent) ;
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                Intent intent = new Intent(InicioSesionActivity.this, MainActivity.class);
-                startActivity(intent);
+
+
+
 
             }
 
@@ -96,9 +116,6 @@ public class InicioSesionActivity extends AppCompatActivity {
                 String nombreUsuario = txtUsuario.getText().toString();
                 String password = txtContrasena.getText().toString();
 
-                System.out.println(nombreUsuario);
-                System.out.println(password);
-
                 Map<String, String> parametros = new HashMap<>();
                 parametros.put("usuario",nombreUsuario);
                 parametros.put("contrasena",password);
@@ -110,29 +127,9 @@ public class InicioSesionActivity extends AppCompatActivity {
         };
         requestQueue.add(stringRequest );
 
-
     }
 
-    private void establecerIdUsuario(JSONObject jsonObject) {
-        Usuario usuario = null;
-        JSONArray json = jsonObject.optJSONArray("usuarios");
 
-        try {
-            for (int i = 0; i < json.length(); i++) {
-                usuario = new Usuario();
-                JSONObject object = null;
-                object = json.getJSONObject(i);
-
-                usuario.setId(object.optInt("id"));
-
-
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
-        }
-    }
 
 }
 
