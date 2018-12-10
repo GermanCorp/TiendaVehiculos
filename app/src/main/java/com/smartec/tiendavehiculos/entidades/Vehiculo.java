@@ -11,11 +11,12 @@ public class Vehiculo {
     private String combustible;
     private String tipo;
     private Double precioVenta;
+    private String imagen;
 
     public Vehiculo(Integer id) {
     }
 
-    public Vehiculo(Integer id, String marca, String modelo, String color, int anio, int cilindraje, String transmision, String combustible, String tipo, Double precioVenta) {
+    public Vehiculo(Integer id, String marca, String modelo, String color, int anio, int cilindraje, String transmision, String combustible, String tipo, Double precioVenta, String imagen) {
         this.id = id;
         this.marca = marca;
         this.modelo = modelo;
@@ -26,6 +27,7 @@ public class Vehiculo {
         this.combustible = combustible;
         this.tipo = tipo;
         this.precioVenta = precioVenta;
+        this.imagen = imagen;
     }
 
     public Integer getId() {
@@ -106,5 +108,13 @@ public class Vehiculo {
 
     public void setPrecioVenta(Double precioVenta) {
         this.precioVenta = precioVenta;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 }

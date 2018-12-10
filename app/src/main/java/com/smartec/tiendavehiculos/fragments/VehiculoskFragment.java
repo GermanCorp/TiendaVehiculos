@@ -1,6 +1,5 @@
 package com.smartec.tiendavehiculos.fragments;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -20,8 +20,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.smartec.tiendavehiculos.R;
 import com.smartec.tiendavehiculos.ServerConfig;
-import com.smartec.tiendavehiculos.entidades.Vehiculo;
+import com.smartec.tiendavehiculos.adapter.VehiculosImagenAdapter;
+import com.smartec.tiendavehiculos.entidades.Marca;
+import com.smartec.tiendavehiculos.entidades.VehiculoCard;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -38,11 +41,17 @@ public class VehiculoskFragment extends Fragment{
 
     private OnFragmentInteractionListener mListener;
 
-    private RecyclerView recyclerVehiculos;
+    /*private RecyclerView recyclerVehiculos;
     private ArrayList<Vehiculo> listaVehiculos;
     private ProgressDialog progress;
     private RequestQueue request;
+    private JsonObjectRequest jsonObjectRequest;*/
+
+    RecyclerView recyclerVehiculos;
+    ArrayList<VehiculoCard> listaVehiculos;
+    private RequestQueue request;
     private JsonObjectRequest jsonObjectRequest;
+
 
     public VehiculoskFragment() {
         // Required empty public constructor
@@ -68,41 +77,70 @@ public class VehiculoskFragment extends Fragment{
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_vehiculosk,container,false);
-        /*listaVehiculos = new ArrayList<>();
-        recyclerVehiculos = vista.findViewById(R.id.recicler_imagen_vehiculos);
-        recyclerVehiculos.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        listaVehiculos  = new ArrayList<>();
+
+        recyclerVehiculos = vista.findViewById(R.id.vehiculosRecycler);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerVehiculos.setLayoutManager(linearLayoutManager);
         recyclerVehiculos.setHasFixedSize(true);
         request = Volley.newRequestQueue(getContext());
-        getVehiculos();*/
+
+        cargarListaVehiculos();
+
+        //VehiculosImagenAdapter vehiculosAdapterRecyclerView = new VehiculosImagenAdapter(buildVehiculo(), R.layout.cardview_vehiculo, getActivity());
+        //recyclerVehiculos.setAdapter(vehiculosAdapterRecyclerView);
         return vista;
     }
 
-    private void getVehiculos() {
-        progress = new ProgressDialog(getContext());
-        progress.setMessage("Consultando...");
-        progress.show();
-        String url = ServerConfig.URL_BASE + "getVehiculos.php";
+    private void cargarListaVehiculos() {
+        String url = ServerConfig.URL_BASE + "getVehiculosCard.php";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(JSONObject response) {
+                VehiculoCard vehiculo= null;
+                JSONArray json = response.optJSONArray("vehiculo");
 
+                try {
+                    for (int i = 0; i<json.length(); i ++){
+                        vehiculo = new VehiculoCard();
+                        JSONObject jsonObject = null;
+                        jsonObject = json.getJSONObject(i);
+
+                        vehiculo.setDescripcionMarca(jsonObject.optString("descripcionMarca"));
+                        vehiculo.setPrecioVenta(jsonObject.optString("precioVenta"));
+                        vehiculo.setRutaImagen(jsonObject.optString("imagen"));
+                        //vehiculo.setImagen(jsonObject.optString("imagen"));
+                        listaVehiculos.add(vehiculo);
+                    }
+                    VehiculosImagenAdapter vehiculosAdapterRecyclerView = new VehiculosImagenAdapter(listaVehiculos, R.layout.cardview_vehiculo, getActivity(), getContext());
+                    recyclerVehiculos.setAdapter(vehiculosAdapterRecyclerView);
+                    //progress.hide();
+                   // ArrayAdapter<Marca> arrayAdapterMarca = new ArrayAdapter<Marca>(getContext(),android.R.layout.simple_spinner_dropdown_item, listaMarca);
+                    //spinnerMarca.setAdapter(arrayAdapterMarca);
+
+                }catch (Exception e){
+                    //e.printStackTrace();
+                    //Toast.makeText(getContext(), "Error al cargar los datos\n" + e, Toast.LENGTH_LONG).show();
+                    //progress.hide();
+                }
             }
         }, new Response.ErrorListener() {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(),"Error al cargar las marcas",Toast.LENGTH_LONG).show();
-                progress.hide();
+                Toast.makeText(getContext(),"No se ha podido conectar con el servidor",Toast.LENGTH_LONG).show();
             }
         });
-        RequestQueue request = Volley.newRequestQueue(getContext());
+        request = Volley.newRequestQueue(getContext());
         request.add(jsonObjectRequest);
+
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

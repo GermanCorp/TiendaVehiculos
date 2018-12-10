@@ -5,14 +5,21 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +40,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.smartec.tiendavehiculos.MainActivity;
 import com.smartec.tiendavehiculos.R;
 import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.entidades.Combustible;
@@ -45,11 +53,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static android.app.Activity.RESULT_OK;
 
 public class RegistroVehiculoFragment extends Fragment{
@@ -76,7 +88,6 @@ public class RegistroVehiculoFragment extends Fragment{
     private ArrayList<Transmision> listaTransmision;
     private ArrayList<Combustible> listaCombustible;
 
-
     private String mParam1;
     private String mParam2;
 
@@ -90,12 +101,14 @@ public class RegistroVehiculoFragment extends Fragment{
 
     private Button btnRegistrar;
     private ProgressDialog progress;
+    private Bitmap bitmap;
 
-    private ImageView img1;
+    ImageView imagen1;
 
     public RegistroVehiculoFragment() {
         // Required empty public constructor
     }
+
 
     public static RegistroVehiculoFragment newInstance(String param1, String param2) {
         RegistroVehiculoFragment fragment = new RegistroVehiculoFragment();
@@ -105,6 +118,7 @@ public class RegistroVehiculoFragment extends Fragment{
         fragment.setArguments(args);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,8 +136,7 @@ public class RegistroVehiculoFragment extends Fragment{
     //onCreateView
     //********************************************************************
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View viewRVehiculos = inflater.inflate(R.layout.fragment_registro_vehiculo, container, false);
         listaMarca = new ArrayList<>();
@@ -144,9 +157,15 @@ public class RegistroVehiculoFragment extends Fragment{
         imputPrecioVenta= viewRVehiculos.findViewById(R.id.imput_precio_venta);
         btnRegistrar = viewRVehiculos.findViewById(R.id.btnGuardar);
 
-        img1 = viewRVehiculos.findViewById(R.id.imagen_carr_1);
+        imagen1 = viewRVehiculos.findViewById(R.id.imagen_carr_1);
 
-        img1.setOnClickListener(new View.OnClickListener() {
+        if(validarPermisos()){
+            imagen1.setEnabled(true);
+        }else {
+            imagen1.setEnabled(false);
+        }
+
+        imagen1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 cargarImagen();
@@ -176,7 +195,103 @@ public class RegistroVehiculoFragment extends Fragment{
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
+
         return viewRVehiculos;
+    }
+
+
+
+
+    //********************************************************************
+    //Validar permisos para acceder al almacenamiento del movil
+    //********************************************************************
+    private boolean validarPermisos() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+
+        if ((getContext().checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) &&
+                (getContext().checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            return true;
+        }
+
+        if ((shouldShowRequestPermissionRationale(CAMERA)) ||
+                (shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE))) {
+            cargarDialogoRecomendacion();
+        } else {
+            requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, 100);
+        }
+        return false;
+    }
+
+
+
+
+    //********************************************************************
+    //Solicitar el permiso para acceder a la memoria de manera manual
+    //********************************************************************
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(requestCode == 100){
+            if(grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                    imagen1.setEnabled(true);
+            }else {
+                solicitarPermisosManual();
+            }
+        }
+    }
+
+
+
+
+    //********************************************************************
+    //Solicitar permisos de manera manual
+    //********************************************************************
+    private void solicitarPermisosManual() {
+        final CharSequence[] opciones = {"Si", "No"};
+        final AlertDialog.Builder alertOpciones = new AlertDialog.Builder(getContext());
+        alertOpciones.setTitle("¿Desea configurar los permisos de forma manual?");
+        alertOpciones.setItems(opciones, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (opciones[i].equals("Si")) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", getContext().getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getContext(),"Los Permisos no fueron aceptados",Toast.LENGTH_LONG).show();
+                    dialogInterface.dismiss(); // cierra el diálogo
+                }
+            }
+        });
+
+        alertOpciones.show();
+    }
+
+
+
+
+    //********************************************************************
+    //Recomienda al usuario aceptar las recomendaciones de aceptar los permisos
+    //********************************************************************
+    private void cargarDialogoRecomendacion() {
+        AlertDialog.Builder dialogo = new AlertDialog.Builder(getContext());
+        dialogo.setTitle("Permisos Desactivados");
+        dialogo.setMessage("Debe aceptar los permisos para el corrector funcionamiento de la aplicación");
+
+        dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                requestPermissions(new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, 100);
+
+            }
+        });
+        dialogo.show();
     }
 
 
@@ -184,11 +299,9 @@ public class RegistroVehiculoFragment extends Fragment{
 
 
 
-
     //********************************************************************
-    //Alert Dialog de Cargar Imagen
+    //Alert Dialog con las opciones de Cargar la Imagen
     //********************************************************************
-
     private void cargarImagen(){
         final CharSequence[] opciones = {"Tomar Foto", "Seleccionar Imagen", "Cancelar"};
         final AlertDialog.Builder alertOpciones = new AlertDialog.Builder(getContext());
@@ -199,11 +312,11 @@ public class RegistroVehiculoFragment extends Fragment{
                 if (opciones[i].equals("Tomar Foto")) {
                     tomarFotografia();
                 } else if (opciones[i].equals("Seleccionar Imagen")) {
-                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     intent.setType("image/");
                     startActivityForResult(intent.createChooser(intent, "Seleccione una aplicación"), COD_SELECCIONAR);
                 } else {
-                    dialogInterface.dismiss();
+                    dialogInterface.dismiss(); // cierra el diálogo
                 }
             }
             });
@@ -219,23 +332,28 @@ public class RegistroVehiculoFragment extends Fragment{
     //********************************************************************
     // Tomar fotografía
     //********************************************************************
-
-    private void tomarFotografia(){
-        File fileImagen = new File(Environment.getExternalStorageDirectory(),RUTA_IMAGEN);
+    private void tomarFotografia() {
+        File fileImagen = new File(Environment.getExternalStorageDirectory(), RUTA_IMAGEN);
         boolean isCreada = fileImagen.exists();
-        String nombreImagen="";
+        String nombreImagen = "";
 
-        if(!isCreada){
-            isCreada = fileImagen.mkdir();
+        if (!isCreada) {
+            isCreada = fileImagen.mkdirs();
         }
-        if(isCreada){
-            nombreImagen = (System.currentTimeMillis()/1000)+".jpg";
+        if (isCreada) {
+            nombreImagen = (System.currentTimeMillis() / 1000) + ".jpg";
         }
 
-       path = Environment.getExternalStorageDirectory()+File.separator+RUTA_IMAGEN+File.separator+nombreImagen;
+        path = Environment.getExternalStorageDirectory() + File.separator + RUTA_IMAGEN + File.separator + nombreImagen;
         File imagen = new File(path);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imagen));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            String authorities = getContext().getPackageName() + ".provider";
+            Uri imageUri = FileProvider.getUriForFile(getContext(), authorities, imagen);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+        } else {
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imagen));
+        }
         startActivityForResult(intent, COD_CAMARA);
     }
 
@@ -246,32 +364,50 @@ public class RegistroVehiculoFragment extends Fragment{
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK){
             switch (requestCode){
+
                 case COD_SELECCIONAR:
                     Uri miPath = data.getData();
-                    img1.setImageURI(miPath);
+                    imagen1.setImageURI(miPath);
+                    try {
+                        bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), miPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
+
                 case COD_CAMARA:
                     MediaScannerConnection.scanFile(getContext(), new String[]{path}, null,
-                            new MediaScannerConnection.MediaScannerConnectionClient() {
-                        @Override
-                        public void onMediaScannerConnected() {
-                            Log.i("Ruta de almacenamiento", "Path: " + path);
-                        }
-                        @Override
-                        public void onScanCompleted(String s, Uri uri) {
-
-                        }
-                    });
-
-                    Bitmap bitmap = BitmapFactory.decodeFile(path);
-                    img1.setImageBitmap(bitmap);
+                            new MediaScannerConnection.OnScanCompletedListener() {
+                                @Override
+                                public void onScanCompleted(String path, Uri uri) {
+                                    Log.i("Ruta de almacenamiento", "Path" + path);
+                                }
+                            });
+                    bitmap = BitmapFactory.decodeFile(path);
+                    imagen1.setImageBitmap(bitmap);
                     break;
             }
+            bitmap = redimencionarImagen(bitmap, 600, 800);
         }
     }
 
 
 
+
+    private Bitmap redimencionarImagen(Bitmap bitmap, float anchoNuevo, float altoNuevo) {
+        int ancho = bitmap.getWidth();
+        int alto = bitmap.getHeight();
+
+        if(ancho>anchoNuevo || alto>altoNuevo){
+            float escalaAncho = anchoNuevo /ancho;
+            float escalaAlto = altoNuevo/alto;
+            Matrix matrix = new Matrix();
+            matrix.postScale(escalaAncho, escalaAlto);
+            return Bitmap.createBitmap(bitmap, 0,0, ancho, alto, matrix, false);
+        }else {
+            return bitmap;
+        }
+    }
 
 
     //********************************************************************
@@ -288,28 +424,38 @@ public class RegistroVehiculoFragment extends Fragment{
         final Transmision transmision = (Transmision) spinnerTransmision.getSelectedItem();
         final Tipo tipo = (Tipo) spinnerTipo.getSelectedItem();
 
-        String url = ServerConfig.URL_BASE+ "addCar.php?";
+        String url = ServerConfig.URL_BASE+ "addCar.php";
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                    /*imputId.setText("");
+                progress.hide();
+                /*imputId.setText("");
                     imputColor.setText("");
                     imputAnio.setText("");
                     imputCilindraje.setText("");
                     imputPrecioVenta.setText("");
                     progress.hide();*/
-                    Toast.makeText(getContext(),"Registro Completo",Toast.LENGTH_LONG).show();
+                    if(response.trim().equalsIgnoreCase("registra")){
+                        Toast.makeText(getContext(),"Registro Completo",Toast.LENGTH_LONG).show();
+                    }else {
+                        Toast.makeText(getContext(),"No se pudo registrar",Toast.LENGTH_LONG).show();
+                    }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(),"No se pudo registrar",Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),"No se pudo conectar",Toast.LENGTH_LONG).show();
+                progress.hide();
             }
         }){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
+
+                String imagen = convertirImgString(bitmap);
+
                 Map<String, String> params = new HashMap<>();
+
                 params.put("idVehiculo", imputId.getText().toString());
                 params.put("fkMarca", String.valueOf(marca.getId()));
                 params.put("fkModelo", String.valueOf(modelo.getModelo()));
@@ -320,6 +466,7 @@ public class RegistroVehiculoFragment extends Fragment{
                 params.put("anio", imputAnio.getText().toString());
                 params.put("cilindraje", imputCilindraje.getText().toString());
                 params.put("precioVenta", imputPrecioVenta.getText().toString());
+                params.put("imagen", imagen);
                 return params;
             }
         };
@@ -328,6 +475,18 @@ public class RegistroVehiculoFragment extends Fragment{
         request.add(stringRequest);
     }
 
+
+    //********************************************************************
+    //Convirete la imagen en un string
+    //********************************************************************
+    private String convertirImgString(Bitmap bitmap){
+        ByteArrayOutputStream array = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100,array);
+        byte[] imagenByte = array.toByteArray();
+        String imagenString = Base64.encodeToString(imagenByte,Base64.DEFAULT);
+
+        return imagenString;
+    }
 
 
 
@@ -433,7 +592,6 @@ public class RegistroVehiculoFragment extends Fragment{
 
 
 
-
     //********************************************************************
     // obtiene los tipos de transmiision de vehículos desde la base de datos remota
     //********************************************************************
@@ -490,6 +648,7 @@ public class RegistroVehiculoFragment extends Fragment{
 
 
 
+
     //********************************************************************
     // llenar el spnner de la marca del vehículo
     //********************************************************************
@@ -509,7 +668,7 @@ public class RegistroVehiculoFragment extends Fragment{
                 listaMarca.add(marca);
             }
             progress.hide();
-            ArrayAdapter<Marca> arrayAdapterMarca = new ArrayAdapter<Marca>(getContext(),android.R.layout.simple_dropdown_item_1line, listaMarca);
+            ArrayAdapter<Marca> arrayAdapterMarca = new ArrayAdapter<Marca>(getContext(),android.R.layout.simple_spinner_dropdown_item, listaMarca);
             spinnerMarca.setAdapter(arrayAdapterMarca);
 
         }catch (Exception e){
@@ -631,7 +790,6 @@ public class RegistroVehiculoFragment extends Fragment{
     //********************************************************************
     // llenar el spinner de tipo de combustible
     //********************************************************************
-
     private void llenarSpinnerCombustible(JSONObject response){
         listaCombustible.clear();
         Combustible combustible = null;
@@ -668,6 +826,8 @@ public class RegistroVehiculoFragment extends Fragment{
             mListener.onFragmentInteraction(uri);
         }
     }
+
+
 
 
     @Override

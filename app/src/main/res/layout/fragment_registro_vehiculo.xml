@@ -243,13 +243,14 @@
                     android:layout_weight="2"
                     android:weightSum="2"
                     >
-                    <Button
+                    <ImageView
                         android:id="@+id/imagen_carr_1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="@drawable/carro_predeterminado"
                         />
+
                     <ImageView
                         android:id="@+id/imagen_carr_2"
                         android:layout_width="match_parent"

@@ -23,7 +23,6 @@
             android:scaleType="centerCrop"
             android:onClick="goDetalleReceta"
             android:adjustViewBounds="true"
-
             />
 
         <LinearLayout
@@ -42,7 +41,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/card_nombre_vehiculo"
+                    android:id="@+id/card_precio_vehiculo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="L.120,000.00"

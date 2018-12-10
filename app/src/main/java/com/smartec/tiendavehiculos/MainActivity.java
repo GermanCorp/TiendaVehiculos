@@ -14,15 +14,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.smartec.tiendavehiculos.fragments.PerfilUsuarioFragment;
 import com.smartec.tiendavehiculos.fragments.RegistroUsuariosFragment;
 import com.smartec.tiendavehiculos.fragments.RegistroVehiculoFragment;
+import com.smartec.tiendavehiculos.fragments.VehiculoskFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, RegistroVehiculoFragment.OnFragmentInteractionListener,
-        RegistroUsuariosFragment.OnFragmentInteractionListener,PerfilUsuarioFragment.OnFragmentInteractionListener{
-
-    public static Integer id;
+        RegistroUsuariosFragment.OnFragmentInteractionListener, VehiculoskFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,16 +95,16 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_gallery) {
             miFragment = new RegistroUsuariosFragment();
             fragmentSleccionado = true;
+
         } else if (id == R.id.nav_slideshow) {
-            miFragment = new PerfilUsuarioFragment();
-            fragmentSleccionado = true;
 
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
-
+            miFragment = new VehiculoskFragment();
+            fragmentSleccionado = true;
         }
 
         if (fragmentSleccionado){

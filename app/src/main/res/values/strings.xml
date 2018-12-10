@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">TiendaVehiculos</string>
+    <string name="servidor">http://192.168.17.1:9001/appVehiculos/</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Venta de Vehiculos</string>
@@ -16,39 +17,15 @@
     <string name="apellidos">Apellidos</string>
     <string name="telefono">Telefono</string>
     <string name="direccion">Direccion</string>
-
+    <string name="usuario">Usuario</string>
     <string name="email">Email</string>
     <string name="celular">Celular</string>
-
-
+    <string name="contrase_a">Contraseña</string>
+    <string name="todo">TODO</string>
     <string name="registrar">Registrar</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_actividad_principal">ActividadPrincipal</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
     <string name="section_format">Hello World from section: %1$d</string>
-    <string name="imagen">imagen</string>
-    <string name="nombresPerfil">Nombres:</string>
-    <string name="telefonoPerfil">Telefono:</string>
-    <string name="direccionPerfil">Direccion:</string>
-    <string name="apellidosPerfil">Apellidos:</string>
-    <string name="e_mailPerfil">E-mail:</string>
-    <string name="contrase_aPerfil">Contraseña:</string>
-    <string name="nombre_de_usuarioPerfil">Nombre de Usuario:</string>
-    <string name="celularPerfil">Celular:</string>
-    <string name="telefonoperfil" />
-    <string name="direccionperfil">TextView</string>
-    <string name="emailperfil">TextView</string>
-    <string name="nombreUsuarioperfil">TextView</string>
-    <string name="nombresperfil">TextView</string>
-    <string name="apellidosperfil">TextView</string>
-    <string name="celularperfil">TextView</string>
-    <string name="contrasenaperfil">TextView</string>
-    <string name="editar">Editar</string>
-    <string name="iniciar_sesi_n">Iniciar Sesión</string>
-    <string name="usuario">Usuario</string>
-    <string name="contrase_a">Contraseña</string>
-    <string name="todo">TODO</string>
-    <string name="registrarme">Registrarme</string>
-
 </resources>
