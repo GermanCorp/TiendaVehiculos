@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -16,22 +15,18 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.smartec.tiendavehiculos.entidades.Usuario;
-import com.smartec.tiendavehiculos.fragments.PerfilUsuarioFragment;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class InicioSesionActivity extends AppCompatActivity {
 
-    Button consultar;
+    Button consultar , registrar;
     TextInputEditText txtUsuario, txtContrasena;
     StringRequest stringRequest;
     RequestQueue requestQueue;
-    String idUsuario;
     Usuario usuario =  new Usuario();
 
 
@@ -53,6 +48,16 @@ public class InicioSesionActivity extends AppCompatActivity {
 
                 consultarUsuario();
                 
+            }
+        });
+
+        registrar = (Button)findViewById(R.id.button);
+        registrar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), RegistroUsuariosActivity.class);
+                intent.putExtra("funcion","Guardar");
+                startActivity(intent);
             }
         });
 

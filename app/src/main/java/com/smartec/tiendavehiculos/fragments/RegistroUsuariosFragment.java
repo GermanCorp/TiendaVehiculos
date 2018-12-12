@@ -74,19 +74,13 @@ public class RegistroUsuariosFragment extends Fragment {
 
     RequestQueue requestQueue;
     StringRequest stringRequest;
-    Request request;
 
 
     private OnFragmentInteractionListener mListener;
 
-
-
-
     public RegistroUsuariosFragment() {
         // Required empty public constructor
     }
-
-
 
     public static RegistroUsuariosFragment newInstance(String param1, String param2) {
         RegistroUsuariosFragment fragment = new RegistroUsuariosFragment();
@@ -153,7 +147,7 @@ public class RegistroUsuariosFragment extends Fragment {
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-               // if(response.trim().equals("registra")) {
+                if (response.equals("registra")) {
                     campoNombres.setText("");
                     campoApellidos.setText("");
                     campoDireccion.setText("");
@@ -165,12 +159,14 @@ public class RegistroUsuariosFragment extends Fragment {
                     fotoUsuario.setImageResource(R.mipmap.ic_launcher);
 
 
-                    Toast.makeText(getContext(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Registro Exitoso"+response, Toast.LENGTH_SHORT).show();
                     /*}else {
                     Toast.makeText(getContext(), "No se ha registrado con exito", Toast.LENGTH_SHORT).show();
                 }*/
+                } else {
+                    Toast.makeText(getContext(), "No registra"+response, Toast.LENGTH_SHORT).show();
                 }
-
+            }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {

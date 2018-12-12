@@ -31,6 +31,7 @@ import com.android.volley.toolbox.Volley;
 import com.smartec.tiendavehiculos.InicioSesionActivity;
 import com.smartec.tiendavehiculos.MainActivity;
 import com.smartec.tiendavehiculos.R;
+import com.smartec.tiendavehiculos.RegistroUsuariosActivity;
 import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.entidades.Modelo;
 import com.smartec.tiendavehiculos.entidades.Usuario;
@@ -59,22 +60,19 @@ public class PerfilUsuarioFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    TextView campoNombres, campoApellidos, campoDireccion, campoEmail, campoTelefono, campoCelular, campoNombreUsuario, campoContrasenia;
+    TextView campoNombres, campoApellidos,campoDireccion, campoEmail, campoTelefono, campoCelular,campoNombreUsuario, campoContrasenia;
     ImageView fotoUsuario;
     Button botonEditar;
     StringRequest stringRequest;
     RequestQueue requestQueue;
-    public static final String idUsuario = "";
     Usuario usuario = new Usuario();
-
+    RegistroUsuariosActivity registroUsuariosActivity = new RegistroUsuariosActivity();
 
     private OnFragmentInteractionListener mListener;
 
     public PerfilUsuarioFragment() {
-        // Required empty public constructor
 
     }
-
 
     // TODO: Rename and change types and number of parameters
     public static PerfilUsuarioFragment newInstance(String param1, String param2) {
@@ -99,13 +97,13 @@ public class PerfilUsuarioFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View vista = inflater.inflate(R.layout.fragment_perfil_usuario, container, false);
 
-        fotoUsuario = (ImageView) vista.findViewById(R.id.imagenUsuario);
+        fotoUsuario =  (ImageView)vista.findViewById(R.id.imagenUsuario);
         campoNombres = (TextView) vista.findViewById(R.id.nombres);
-        campoApellidos = (TextView) vista.findViewById(R.id.apellidos);
-        campoDireccion = (TextView) vista.findViewById(R.id.direccion);
+        campoApellidos= (TextView) vista.findViewById(R.id.apellidos);
+        campoDireccion =  (TextView) vista.findViewById(R.id.direccion);
         campoEmail = (TextView) vista.findViewById(R.id.email);
         campoCelular = (TextView) vista.findViewById(R.id.celular);
         campoContrasenia = (TextView) vista.findViewById(R.id.contrasena);
@@ -119,27 +117,11 @@ public class PerfilUsuarioFragment extends Fragment {
         botonEditar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*
-               Bundle bundle = new Bundle();
-               Intent intent = new Intent(getContext(),RegistroUsuariosFragment.class);
-               startActivity(intent,bundle);
-                 */
 
-                FragmentTransaction trans = getFragmentManager().beginTransaction();
-                /*
-                 * IMPORTANT: We use the "root frame" defined in
-                 * "root_fragment.xml" as the reference to replace fragment
-                 */
-                trans.replace(R.id.fragment_perfil_usuario, new RegistroUsuariosFragment());
-                /*
-                 * IMPORTANT: The following lines allow us to add the fragment
-                 * to the stack and return to it later, by pressing back
-                 */
-                trans.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                trans.addToBackStack(null);
 
-                trans.commit();
-                Toast.makeText(getContext(), "Editar", Toast.LENGTH_SHORT).show();
+               Intent intent = new Intent(getContext(),RegistroUsuariosActivity.class);
+               intent.putExtra("funcion","editar");
+               startActivity(intent);
 
             }
 
@@ -166,9 +148,8 @@ public class PerfilUsuarioFragment extends Fragment {
 
     }
 
-
     private void consultaUsuario() {
-        String url = ServerConfig.URL_BASE + "consultarUsuario.php?";
+        String url = ServerConfig.URL_BASE+"consultarUsuario.php?";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -182,20 +163,20 @@ public class PerfilUsuarioFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }
+                          }
 
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(), "No se ha podido conectar" + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(),"No se ha podido conectar" + error,Toast.LENGTH_SHORT).show();
             }
         }
 
-        ) {
+        ){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parametros = new HashMap<>();
-                parametros.put("id", usuario.getId().toString());//""+usuario.getId()
+                parametros.put("id",usuario.getId().toString());//""+usuario.getId()
 
                 return parametros;
 
@@ -203,22 +184,20 @@ public class PerfilUsuarioFragment extends Fragment {
 
         };
 
-        requestQueue.add(stringRequest);
+        requestQueue.add(stringRequest );
 
 
     }
 
     private void llenarUsuario(JSONObject jsonObject) {
-        // Usuario usuario = null;
         JSONArray json = jsonObject.optJSONArray("usuarios");
 
         try {
             for (int i = 0; i < json.length(); i++) {
-                // usuario = new Usuario();
+
                 JSONObject object = null;
                 object = json.getJSONObject(i);
 
-                //usuario.setId(object.optInt("id"));
                 usuario.setNombres(object.optString("nombres"));
                 usuario.setApellidos(object.optString("apellidos"));
                 usuario.setNombreUsuario(object.optString("nombreUsuario"));
@@ -228,10 +207,13 @@ public class PerfilUsuarioFragment extends Fragment {
                 usuario.setEmail(object.optString("email"));
                 usuario.setContrasenia(object.optString("pasword"));
                 usuario.setFotoPerfil(object.optString("fotoPerfil"));
+
+
             }
 
         } catch (Exception e) {
             e.printStackTrace();
+
         }
 
         campoNombres.setText(usuario.getNombres());
@@ -243,24 +225,30 @@ public class PerfilUsuarioFragment extends Fragment {
         campoNombreUsuario.setText(usuario.getNombreUsuario());
         campoContrasenia.setText(usuario.getContrasenia());
 
-        String urlImagen = ServerConfig.URL_BASE + usuario.getFotoPerfil();
+        String urlImagen =ServerConfig.URL_BASE+usuario.getFotoPerfil();
         cargarWebServiceImagen(urlImagen);
+
+        registroUsuariosActivity.nombresU = usuario.getNombres();
+        registroUsuariosActivity.apellidosU = usuario.getApellidos();
+        registroUsuariosActivity.direccionU = usuario.getDireccion();
+        registroUsuariosActivity.telefonoU= usuario.getTelefono();
+        registroUsuariosActivity.celularU= usuario.getCelular();
+        registroUsuariosActivity.nombreUsuarioU = usuario.getNombreUsuario();
+        registroUsuariosActivity.contrasenaU = usuario.getContrasenia();
+        registroUsuariosActivity.emailU= usuario.getEmail();
+        registroUsuariosActivity.foto = usuario.getFotoPerfil();
+
+
+
     }
 
-
-
-
-
-
-
-
     private void cargarWebServiceImagen(String urlImagen) {
-        urlImagen = urlImagen.replace(" ", "%20");
+        urlImagen = urlImagen.replace(" ","%20");
 
         ImageRequest imageRequest = new ImageRequest(urlImagen, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
-                fotoUsuario.setImageBitmap(response);
+                    fotoUsuario.setImageBitmap(response);
             }
         }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
             @Override
