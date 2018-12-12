@@ -28,4 +28,18 @@
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="iniciar_sesi_n">Iniciar Sesión</string>
+    <string name="registrarme">Registrarme</string>
+    <string name="nombresPerfil">Nombres:</string>
+    <string name="apellidosPerfil">Apellidos:</string>
+    <string name="nombre_de_usuarioPerfil">Nombre del Usuario:</string>
+    <string name="e_mailPerfil">E-mail:</string>
+    <string name="contrase_aPerfil">Contraseña:</string>
+    <string name="direccionPerfil">Dirección:</string>
+    <string name="celularPerfil">Celular:</string>
+    <string name="telefonoPerfil">Teléfono:</string>
+    <string name="editar">Editar</string>
+    <string name="imagen">imagen</string>
+    <string name="title_activity_detalle_vehiculo">DetalleVehiculo</string>
+    <string name="title_activity_detalle_vendedor">DetalleVendedor</string>
 </resources>

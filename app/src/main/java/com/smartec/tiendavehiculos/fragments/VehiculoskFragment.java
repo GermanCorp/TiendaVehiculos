@@ -29,6 +29,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class VehiculoskFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -112,8 +114,20 @@ public class VehiculoskFragment extends Fragment{
                         jsonObject = json.getJSONObject(i);
 
                         vehiculo.setDescripcionMarca(jsonObject.optString("descripcionMarca"));
+                        vehiculo.setDescripcionModelo(jsonObject.optString("descripcionModelo"));
+                        vehiculo.setAnio(jsonObject.optString("anio"));
+                        vehiculo.setColor(jsonObject.optString("color"));
+                        vehiculo.setCilindraje(jsonObject.optString("cilindraje"));
                         vehiculo.setPrecioVenta(jsonObject.optString("precioVenta"));
                         vehiculo.setRutaImagen(jsonObject.optString("imagen"));
+                        vehiculo.setIdUsuario(jsonObject.optInt("idUsuario"));
+                        vehiculo.setNombres(jsonObject.optString("nombres"));
+                        vehiculo.setApellidos(jsonObject.optString("apellidos"));
+                        vehiculo.setCelular(jsonObject.optString("celular"));
+                        vehiculo.setTelefono(jsonObject.optString("telefono"));
+                        vehiculo.setEmail(jsonObject.optString("email"));
+                        vehiculo.setFotoPerfil(jsonObject.optString("fotoPerfil"));
+                        vehiculo.setDireccion(jsonObject.optString("direccion"));
                         //vehiculo.setImagen(jsonObject.optString("imagen"));
                         listaVehiculos.add(vehiculo);
                     }

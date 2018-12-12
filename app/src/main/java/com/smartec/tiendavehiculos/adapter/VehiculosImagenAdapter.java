@@ -21,12 +21,18 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
 import com.smartec.tiendavehiculos.ActividadPrincipal;
+import com.smartec.tiendavehiculos.DetalleVehiculo;
+import com.smartec.tiendavehiculos.DetalleVendedor;
+import com.smartec.tiendavehiculos.MainActivity;
 import com.smartec.tiendavehiculos.R;
 import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.entidades.VehiculoCard;
+import com.smartec.tiendavehiculos.fragments.DetalleVehiculoFragment;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagenAdapter.VehiculosViewHolder> {
 
@@ -56,27 +62,51 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
 
 
     @Override
-    public void onBindViewHolder(VehiculosViewHolder holder, final int position) {
+    public void onBindViewHolder(final VehiculosViewHolder holder, final int position) {
         Log.d("BIND", ""+position);
 
-        VehiculoCard vehiculo = listaVehiculos.get(position);
+        final VehiculoCard vehiculo = listaVehiculos.get(position);
 
         holder.carPrecioCard.setText(vehiculo.getPrecioVenta());
-        holder.carDescriptionCard.setText(vehiculo.getDescripcionMarca());
+        holder.carDescriptionCard.setText(vehiculo.getDescripcionMarca() + ", " + vehiculo.getDescripcionModelo() + ", " + vehiculo.getAnio());
+        holder.nombreVendedor.setText(vehiculo.getNombres() + " " + vehiculo.getApellidos());
+        holder.direccionVendedor.setText(vehiculo.getDireccion());
 
-        cargarImagen(listaVehiculos.get(position).getRutaImagen(), holder);
-        /*if(listaVehiculos.get(position).getRutaImagen()!=null){
+        //cargarImagen(listaVehiculos.get(position).getRutaImagen(), holder);
+        if(listaVehiculos.get(position).getRutaImagen()!=null){
             //holder.imagenVehiculo.setImageBitmap(listaVehiculos.get(position).getImagen());
             cargarImagen(listaVehiculos.get(position).getRutaImagen(), holder);
+            cargarImagenVendedor(listaVehiculos.get(position).getFotoPerfil(),holder);
         }else {
             holder.imagenVehiculo.setImageResource(R.drawable.carro_predeterminado);
-        }*/
+        }
 
         holder.imagenVehiculo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(activity, ActividadPrincipal.class);
-                
+                Intent intent = new Intent(activity, DetalleVehiculo.class);
+                intent.putExtra("marca", listaVehiculos.get(position).getDescripcionMarca());
+                intent.putExtra("modelo", listaVehiculos.get(position).getDescripcionModelo());
+                intent.putExtra("anio", listaVehiculos.get(position).getAnio());
+                intent.putExtra("color", listaVehiculos.get(position).getColor());
+                intent.putExtra("cilindraje", listaVehiculos.get(position).getCilindraje());
+                intent.putExtra("precio", listaVehiculos.get(position).getPrecioVenta());
+                intent.putExtra("imagen", ServerConfig.URL_BASE + listaVehiculos.get(position).getRutaImagen());
+                activity.startActivity(intent);
+            }
+        });
+
+        holder.fotoVendedor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(activity, DetalleVendedor.class);
+                intent.putExtra("nombres", listaVehiculos.get(position).getNombres());
+                intent.putExtra("apellidos", listaVehiculos.get(position).getApellidos());
+                intent.putExtra("celular", listaVehiculos.get(position).getCelular());
+                intent.putExtra("telefono", listaVehiculos.get(position).getTelefono());
+                intent.putExtra("email", listaVehiculos.get(position).getEmail());
+                intent.putExtra("direccion", listaVehiculos.get(position).getDireccion());
+                intent.putExtra("foto",ServerConfig.URL_BASE + listaVehiculos.get(position).getFotoPerfil());
                 activity.startActivity(intent);
             }
         });
@@ -91,6 +121,25 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
             @Override
             public void onResponse(Bitmap response) {
                 holder.imagenVehiculo.setImageBitmap(response);
+                holder.fotoVendedor.setImageBitmap(response);
+            }
+        }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Toast.makeText(context, "Error al cargar la imagen\n", Toast.LENGTH_LONG).show();
+            }
+        });
+        request.add(imageRequest);
+    }
+
+    private void cargarImagenVendedor(String rutaImagen, final VehiculosViewHolder holder) {
+        //String servidor = (R.string.servidor);
+        String urlImagen = ServerConfig.URL_BASE + rutaImagen;
+        urlImagen = urlImagen.replace(" ","%20");
+        ImageRequest imageRequest = new ImageRequest(urlImagen, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                holder.fotoVendedor.setImageBitmap(response);
             }
         }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
             @Override
@@ -111,6 +160,9 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
         private ImageView imagenVehiculo;
         private TextView carPrecioCard;
         private TextView carDescriptionCard;
+        private TextView nombreVendedor;
+        private TextView direccionVendedor;
+        private CircleImageView fotoVendedor;
 
         public VehiculosViewHolder(View itemView) {
             super(itemView);
@@ -118,6 +170,9 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
             imagenVehiculo = itemView.findViewById(R.id.imagen_carr);
             carPrecioCard = itemView.findViewById(R.id.card_precio_vehiculo);
             carDescriptionCard = itemView.findViewById(R.id.card_descripcion_vehiculo);
+            nombreVendedor = itemView.findViewById(R.id.nombreVendedor);
+            direccionVendedor = itemView.findViewById(R.id.direccionVendedor);
+            fotoVendedor = itemView.findViewById(R.id.profile_image);
         }
     }
 }

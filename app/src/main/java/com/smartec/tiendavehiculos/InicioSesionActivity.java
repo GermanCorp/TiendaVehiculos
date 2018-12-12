@@ -68,36 +68,25 @@ public class InicioSesionActivity extends AppCompatActivity {
                 txtUsuario.setText("");
                 txtContrasena.setText("");
 
-
-
                 JSONObject jsonObject = null;
+
                 try {
                     jsonObject = new JSONObject(response);
                     JSONArray json = jsonObject.optJSONArray("usuarios");
                     if (json.length()<= 0){
                         Toast.makeText(getApplicationContext(), "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
                     }else{
-
-
                         for (int i = 0; i < json.length(); i++) {
                             JSONObject object = null;
                             object = json.getJSONObject(i);
-
                             usuario.setId(object.optInt("idUsuarios"));
                         }
-
-                        Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                        Intent intent = new Intent(getApplicationContext(),ActividadPrincipal.class);
                         startActivity(intent) ;
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
-
-
-
-
             }
 
 
