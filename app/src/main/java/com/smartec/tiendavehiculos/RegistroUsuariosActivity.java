@@ -81,24 +81,19 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
         funcionBoton = getIntent().getExtras().getString("funcion");
 
         if(funcionBoton.equals("Guardar")  ){
-                botonRegistrar.setText("Registrar");
-            }else {
-                   botonRegistrar.setText("Editar");
-                   campoNombres.setText(nombresU);
-                   campoApellidos.setText(apellidosU);
-                   campoDireccion.setText(direccionU);
-                   campoCelular.setText(celularU);
-                   campoNombreUsuario.setText(nombreUsuarioU);
-                   campoTelefono.setText(telefonoU);
-                   campoEmail.setText(emailU);
-                   campoContrasenia.setText(contrasenaU);
+            botonRegistrar.setText("Registrar");
+        }else {
+            botonRegistrar.setText("Editar");
+            campoNombres.setText(nombresU);
+            campoApellidos.setText(apellidosU);
+            campoDireccion.setText(direccionU);
+            campoCelular.setText(celularU);
+            campoNombreUsuario.setText(nombreUsuarioU);
+            campoTelefono.setText(telefonoU);
+            campoEmail.setText(emailU);
+            campoContrasenia.setText(contrasenaU);
 
-            //String urlImagen =ServerConfig.URL_BASE+foto;
-            //rgarWebServiceImagen(urlImagen);
-
-
-
-
+            cargarWebServiceImagen(foto);
         }
 
 
@@ -151,7 +146,6 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
                 campoNombres.setText("");
                 campoApellidos.setText("");
                 campoDireccion.setText("");
@@ -161,13 +155,7 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                 campoNombreUsuario.setText("");
                 campoContrasenia.setText("");
                 fotoUsuario.setImageResource(R.mipmap.ic_launcher);
-
-                if(response.equals("registra")){
-                    Toast.makeText(getApplicationContext(), "Registro Exitoso"+response, Toast.LENGTH_SHORT).show();
-
-                }else{
-                    Toast.makeText(getApplicationContext(), "No registra"+response, Toast.LENGTH_SHORT).show();
-                }
+                Toast.makeText(getApplicationContext(), "Registro Exitoso"+response, Toast.LENGTH_SHORT).show();
 
 
             }
@@ -229,67 +217,16 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
-       /*         if (campoNombres.getText().toString().isEmpty()) {
-                    Toast.makeText(getApplicationContext(), "Ingrese el Nombre", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (campoApellidos.getText().toString().isEmpty()) {
-                        Toast.makeText(getApplicationContext(), "Ingrese el Apellido", Toast.LENGTH_SHORT).show();
-                    } else {
-                        if (campoEmail.getText().toString().isEmpty()) {
-                            Toast.makeText(getApplicationContext(), "Ingrese el Email", Toast.LENGTH_SHORT).show();
-                        } else {
-                            if (campoTelefono.getText().toString().isEmpty()) {
-                                Toast.makeText(getApplicationContext(), "Ingrese el Telefono", Toast.LENGTH_SHORT).show();
-                            } else {
-                                if (campoCelular.getText().toString().isEmpty()) {
-                                    Toast.makeText(getApplicationContext(), "Ingrese el Celular", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    if (campoNombreUsuario.getText().toString().isEmpty()) {
-                                        Toast.makeText(getApplicationContext(), "Ingrese el Nombre de Usuario", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        if (campoContrasenia.getText().toString().isEmpty()) {
-                                            Toast.makeText(getApplicationContext(), "Ingrese la Contraseña", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            if (campoDireccion.getText().toString().isEmpty()) {
-                                                Toast.makeText(getApplicationContext(), "Ingrese la Direccion", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                campoNombres.setText("");
-                                                campoApellidos.setText("");
-                                                campoDireccion.setText("");
-                                                campoTelefono.setText("");
-                                                campoCelular.setText("");
-                                                campoEmail.setText("");
-                                                campoNombreUsuario.setText("");
-                                                campoContrasenia.setText("");
-                                                fotoUsuario.setImageResource(R.mipmap.ic_launcher);
-
-                                                Toast.makeText(getApplicationContext(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-
-                }*/
-                campoNombres.setText("");
-                campoApellidos.setText("");
-                campoDireccion.setText("");
-                campoTelefono.setText("");
-                campoCelular.setText("");
-                campoEmail.setText("");
-                campoNombreUsuario.setText("");
-                campoContrasenia.setText("");
-                fotoUsuario.setImageResource(R.mipmap.ic_launcher);
-                if(response.equals("registra")){
-                    Toast.makeText(getApplicationContext(), "Registro Exitoso"+response, Toast.LENGTH_SHORT).show();
-
-                }else{
-                    Toast.makeText(getApplicationContext(), "No registra"+response, Toast.LENGTH_SHORT).show();
-                }
+                    campoNombres.setText("");
+                    campoApellidos.setText("");
+                    campoDireccion.setText("");
+                    campoTelefono.setText("");
+                    campoCelular.setText("");
+                    campoEmail.setText("");
+                    campoNombreUsuario.setText("");
+                    campoContrasenia.setText("");
+                    fotoUsuario.setImageResource(R.mipmap.ic_launcher);
+                    Toast.makeText(getApplicationContext(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
             }
 
 

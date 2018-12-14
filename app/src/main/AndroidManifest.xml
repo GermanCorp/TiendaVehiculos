@@ -16,8 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".InicioSesionActivity"
             android:label="@string/app_name"
@@ -29,12 +31,6 @@
             </intent-filter>
         </activity>
 
-
-        <activity
-            android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-        <activity android:name=".RegistroUsuariosActivity"/>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -48,9 +44,17 @@
         <activity
             android:name=".ActividadPrincipal"
             android:label="@string/title_activity_actividad_principal"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DetalleVehiculo"
+            android:label="@string/title_activity_detalle_vehiculo"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".DetalleVendedor"
+            android:label="@string/title_activity_detalle_vendedor"
+            android:theme="@style/AppTheme.NoActionBar" />
 
-        </activity>
+        <activity android:name=".RegistroUsuariosActivity"/>
     </application>
 
 </manifest>

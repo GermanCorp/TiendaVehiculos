@@ -47,11 +47,11 @@ public class InicioSesionActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 consultarUsuario();
-                
+
             }
         });
 
-        registrar = (Button)findViewById(R.id.button);
+        registrar = findViewById(R.id.button);
         registrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,6 +126,3 @@ public class InicioSesionActivity extends AppCompatActivity {
 
 
 }
-
-
-

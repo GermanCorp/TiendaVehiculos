@@ -119,31 +119,14 @@ public class PerfilUsuarioFragment extends Fragment {
             public void onClick(View v) {
 
 
-               Intent intent = new Intent(getContext(),RegistroUsuariosActivity.class);
-               intent.putExtra("funcion","editar");
-               startActivity(intent);
+                Intent intent = new Intent(getContext(),RegistroUsuariosActivity.class);
+                intent.putExtra("funcion","editar");
+                startActivity(intent);
 
             }
 
         });
 
-/*
-        //extraemos el drawable en un bitmap
-        Drawable originalDrawable = getResources().getDrawable(R.drawable.ic_menu_camera);
-        Bitmap originalBitmap = ((BitmapDrawable) originalDrawable).getBitmap();
-
-        //creamos el drawable redondeado
-        RoundedBitmapDrawable roundedDrawable =
-                RoundedBitmapDrawableFactory.create(getResources(), originalBitmap);
-
-        //asignamos el CornerRadius
-        roundedDrawable.setCornerRadius(originalBitmap.getHeight());
-
-        ImageView imageView = (ImageView) vista.findViewById(R.id.imagenUsuario);
-
-        imageView.setImageDrawable(roundedDrawable);
-
-*/
         return vista;
 
     }
@@ -163,7 +146,7 @@ public class PerfilUsuarioFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                          }
+            }
 
         }, new Response.ErrorListener() {
             @Override
@@ -236,7 +219,7 @@ public class PerfilUsuarioFragment extends Fragment {
         registroUsuariosActivity.nombreUsuarioU = usuario.getNombreUsuario();
         registroUsuariosActivity.contrasenaU = usuario.getContrasenia();
         registroUsuariosActivity.emailU= usuario.getEmail();
-        registroUsuariosActivity.foto = usuario.getFotoPerfil();
+        registroUsuariosActivity.foto = ServerConfig.URL_BASE+usuario.getFotoPerfil();
 
 
 
@@ -248,7 +231,7 @@ public class PerfilUsuarioFragment extends Fragment {
         ImageRequest imageRequest = new ImageRequest(urlImagen, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
-                    fotoUsuario.setImageBitmap(response);
+                fotoUsuario.setImageBitmap(response);
             }
         }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
             @Override

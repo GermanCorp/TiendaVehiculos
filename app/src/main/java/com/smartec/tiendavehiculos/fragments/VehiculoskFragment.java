@@ -1,8 +1,11 @@
 package com.smartec.tiendavehiculos.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.smartec.tiendavehiculos.DetalleVendedor;
+import com.smartec.tiendavehiculos.MainActivity;
 import com.smartec.tiendavehiculos.R;
 import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.adapter.VehiculosImagenAdapter;
@@ -83,6 +88,17 @@ public class VehiculoskFragment extends Fragment{
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_vehiculosk,container,false);
         listaVehiculos  = new ArrayList<>();
+
+        FloatingActionButton fab = (FloatingActionButton) vista.findViewById(R.id.addCarr);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                Intent intent = new Intent(getContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         recyclerVehiculos = vista.findViewById(R.id.vehiculosRecycler);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());

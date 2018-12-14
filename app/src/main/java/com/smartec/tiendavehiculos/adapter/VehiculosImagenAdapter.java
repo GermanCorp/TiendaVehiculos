@@ -72,14 +72,15 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
         holder.nombreVendedor.setText(vehiculo.getNombres() + " " + vehiculo.getApellidos());
         holder.direccionVendedor.setText(vehiculo.getDireccion());
 
-        //cargarImagen(listaVehiculos.get(position).getRutaImagen(), holder);
-        if(listaVehiculos.get(position).getRutaImagen()!=null){
+        cargarImagen(listaVehiculos.get(position).getRutaImagen(), holder);
+        cargarImagenVendedor(listaVehiculos.get(position).getFotoPerfil(),holder);
+        /*if(listaVehiculos.get(position).getRutaImagen()!=null){
             //holder.imagenVehiculo.setImageBitmap(listaVehiculos.get(position).getImagen());
             cargarImagen(listaVehiculos.get(position).getRutaImagen(), holder);
             cargarImagenVendedor(listaVehiculos.get(position).getFotoPerfil(),holder);
         }else {
             holder.imagenVehiculo.setImageResource(R.drawable.carro_predeterminado);
-        }
+        }*/
 
         holder.imagenVehiculo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,6 +114,7 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
     }
 
 
+
     private void cargarImagen(String rutaImagen, final VehiculosViewHolder holder) {
         //String servidor = (R.string.servidor);
         String urlImagen = ServerConfig.URL_BASE + rutaImagen;
@@ -131,6 +133,8 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
         });
         request.add(imageRequest);
     }
+
+
 
     private void cargarImagenVendedor(String rutaImagen, final VehiculosViewHolder holder) {
         //String servidor = (R.string.servidor);

@@ -43,41 +43,37 @@
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/modelo"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp"
                 android:layout_marginTop="10dp"
-                />
+                android:text="Modelo:"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/a_o"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp"
                 android:layout_marginTop="10dp"
-                />
+                android:text="Año:"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/color"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp"
                 android:layout_marginTop="10dp"
-                />
+                android:text="Color:"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cilindraje"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="20sp"
                 android:layout_marginTop="10dp"
-                />
+                android:text="Cilindraje:"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -151,12 +147,12 @@
         android:layout_marginTop="10dp"
         />
 
-    <Button
+    <!--<Button
         android:id="@+id/button3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@color/colorAccent"
         android:text="Aceptar"
-        android:textColor="@color/cardview_light_background" />
+        android:textColor="@color/cardview_light_background" />-->
 </LinearLayout>

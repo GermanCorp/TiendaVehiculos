@@ -21,13 +21,14 @@
             >
 
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/imagenUsuario"
-                android:layout_width="133dp"
-                android:layout_height="122dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center"
                 android:layout_marginVertical="30dp"
-                android:contentDescription="@string/imagen" tools:targetApi="o" />
+                android:contentDescription="@string/imagen" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,14 +41,18 @@
                     android:id="@+id/etiquetaNombres"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/nombresPerfil"
-                    />
+                    android:layout_marginTop="10dp"
+                    android:text="Nombres:"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/nombres"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"
                     android:text="Nombre"
                     />
             </LinearLayout>
@@ -64,14 +69,19 @@
                     android:id="@+id/etiquetaApellidos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/apellidosPerfil" />
+                    android:layout_marginTop="10dp"
+                    android:text="Apellidos:"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/apellidos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Apellidos"
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"
                     />
             </LinearLayout>
 
@@ -86,13 +96,18 @@
                     android:id="@+id/EtiquetaUsuario"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/nombre_de_usuarioPerfil" />
+                    android:layout_marginTop="10dp"
+                    android:text="Nombre de Usuario:"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/nombreUsuario"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"
                     android:text="Usuario"
                     />
 
@@ -109,14 +124,19 @@
                     android:id="@+id/etiquetaEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/e_mailPerfil" />
+                    android:layout_marginTop="10dp"
+                    android:text="E-mail:"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="E-mail"
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"
                     />
             </LinearLayout>
 
@@ -126,17 +146,23 @@
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
                 >
+
                 <TextView
                     android:id="@+id/etiquetaContrasena"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/contrase_aPerfil" />
+                    android:layout_marginTop="10dp"
+                    android:text="Contraseña:"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/contrasena"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"
                     android:text="Contraseña" />
             </LinearLayout>
 
@@ -147,18 +173,24 @@
                 android:orientation="horizontal"
                 android:gravity="center_horizontal"
                 >
+
                 <TextView
                     android:id="@+id/etiquetaDireccion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/direccionPerfil" />
+                    android:layout_marginTop="10dp"
+                    android:text="Direccion:"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/direccion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dirección"/>
+                    android:text="Dirección"
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -172,14 +204,19 @@
                     android:id="@+id/etiquetaCelular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/celularPerfil" />
+                    android:layout_marginTop="10dp"
+                    android:text="Celular:"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/celular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Celular"/>
+                    android:text="Celular"
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"/>
 
             </LinearLayout>
 
@@ -195,14 +232,19 @@
                     android:id="@+id/etiquetaTelefono"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimary"
-                    android:text="@string/telefonoPerfil" />
+                    android:layout_marginTop="10dp"
+                    android:text="Telefono:"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/telefono"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Teléfono" />
+                    android:text="Teléfono"
+                    android:textColor="@color/primary_text"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"/>
             </LinearLayout>
 
             <Button
@@ -210,7 +252,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/editarperfil" />
+                android:layout_marginTop="20dp"
+                android:background="@color/colorAccent"
+                android:text="Editar" />
 
 
         </LinearLayout>
