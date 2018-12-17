@@ -4,31 +4,24 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
-import android.transition.Explode;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.Volley;
-import com.smartec.tiendavehiculos.ActividadPrincipal;
 import com.smartec.tiendavehiculos.DetalleVehiculo;
 import com.smartec.tiendavehiculos.DetalleVendedor;
-import com.smartec.tiendavehiculos.MainActivity;
 import com.smartec.tiendavehiculos.R;
 import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.entidades.VehiculoCard;
-import com.smartec.tiendavehiculos.fragments.DetalleVehiculoFragment;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -63,8 +56,6 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
 
     @Override
     public void onBindViewHolder(final VehiculosViewHolder holder, final int position) {
-        Log.d("BIND", ""+position);
-
         final VehiculoCard vehiculo = listaVehiculos.get(position);
 
         holder.carPrecioCard.setText(vehiculo.getPrecioVenta());
@@ -72,15 +63,16 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
         holder.nombreVendedor.setText(vehiculo.getNombres() + " " + vehiculo.getApellidos());
         holder.direccionVendedor.setText(vehiculo.getDireccion());
 
-        cargarImagen(listaVehiculos.get(position).getRutaImagen(), holder);
-        cargarImagenVendedor(listaVehiculos.get(position).getFotoPerfil(),holder);
-        /*if(listaVehiculos.get(position).getRutaImagen()!=null){
+        //cargarImagen(listaVehiculos.get(position).getRutaImagen(), holder);
+        //cargarImagenVendedor(listaVehiculos.get(position).getFotoPerfil(),holder);
+        if(listaVehiculos.get(position).getRutaImagen()!=null){
             //holder.imagenVehiculo.setImageBitmap(listaVehiculos.get(position).getImagen());
             cargarImagen(listaVehiculos.get(position).getRutaImagen(), holder);
             cargarImagenVendedor(listaVehiculos.get(position).getFotoPerfil(),holder);
         }else {
             holder.imagenVehiculo.setImageResource(R.drawable.carro_predeterminado);
-        }*/
+            holder.fotoVendedor.setImageResource(R.drawable.carro_predeterminado);
+        }
 
         holder.imagenVehiculo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +115,6 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
             @Override
             public void onResponse(Bitmap response) {
                 holder.imagenVehiculo.setImageBitmap(response);
-                holder.fotoVendedor.setImageBitmap(response);
             }
         }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
             @Override
@@ -136,11 +127,11 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
 
 
 
-    private void cargarImagenVendedor(String rutaImagen, final VehiculosViewHolder holder) {
+    private void cargarImagenVendedor(String rutaFotoPerfil, final VehiculosViewHolder holder) {
         //String servidor = (R.string.servidor);
-        String urlImagen = ServerConfig.URL_BASE + rutaImagen;
-        urlImagen = urlImagen.replace(" ","%20");
-        ImageRequest imageRequest = new ImageRequest(urlImagen, new Response.Listener<Bitmap>() {
+        String urlImagenPerfil = ServerConfig.URL_BASE + rutaFotoPerfil;
+        urlImagenPerfil = urlImagenPerfil.replace(" ","%20");
+        ImageRequest imageRequest = new ImageRequest(urlImagenPerfil, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
                 holder.fotoVendedor.setImageBitmap(response);
@@ -178,5 +169,22 @@ public class VehiculosImagenAdapter extends RecyclerView.Adapter<VehiculosImagen
             direccionVendedor = itemView.findViewById(R.id.direccionVendedor);
             fotoVendedor = itemView.findViewById(R.id.profile_image);
         }
+    }
+
+
+    /*
+    Añade una lista completa de items
+     */
+    public void addAll(ArrayList<VehiculoCard> lista){
+        listaVehiculos.addAll(lista);
+        notifyDataSetChanged();
+    }
+
+    /*
+    Permite limpiar todos los elementos del recycler
+     */
+    public void clear(){
+        listaVehiculos.clear();
+        notifyDataSetChanged();
     }
 }
