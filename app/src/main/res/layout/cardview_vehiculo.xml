@@ -29,9 +29,7 @@
                 android:id="@+id/profile_image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:src="@drawable/carr"
-                app:civ_border_width="2dp"
-                app:civ_border_color="#FF000000"/>
+                android:src="@mipmap/ic_user"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -69,7 +67,7 @@
                 android:id="@+id/imagen_carr"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/carr"
+                android:background="@drawable/carro_predeterminado"
                 android:scaleType="centerCrop"
                 android:onClick="goDetalleReceta"
                 android:adjustViewBounds="true"

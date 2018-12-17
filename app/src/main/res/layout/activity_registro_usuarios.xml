@@ -38,6 +38,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/nombres"
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz "
+                    android:maxLength="25"
                     android:inputType="textPersonName"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -50,6 +52,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/apellidos"
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz "
+                    android:maxLength="25"
                     android:inputType="textPersonName" />
             </android.support.design.widget.TextInputLayout>
 
@@ -62,6 +66,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/direccion"
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 "
+                    android:maxLength="20"
                     android:inputType="textPostalAddress"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -74,6 +80,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/telefono"
+                    android:digits="0123456789"
+                    android:maxLength="20"
                     android:inputType="phone"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -86,6 +94,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/celular"
+                    android:digits="0123456789"
+                    android:maxLength="20"
                     android:inputType="phone"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -99,6 +109,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email"
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@."
+                    android:maxLength="20"
                     android:inputType="textEmailAddress"/>
             </android.support.design.widget.TextInputLayout>
 
@@ -111,6 +123,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/usuario"
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+                    android:maxLength="20"
                     android:inputType="textEmailSubject"/>
             </android.support.design.widget.TextInputLayout>
 
