@@ -1,5 +1,7 @@
 package com.smartec.tiendavehiculos;
 
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -21,7 +23,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -46,41 +47,55 @@ import java.util.Map;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class RegistroUsuariosActivity extends AppCompatActivity {
+public class ActualizarUsuarioActivity extends AppCompatActivity {
     String path;
-    private final String CARPETA_PRINCIPAL = "misImagenesApp/";
-    private final String CARPETA_IMAGEN = "imagenes";
-    private final String DIRECTORIO_IMAGEN = CARPETA_PRINCIPAL + CARPETA_IMAGEN;
+    private final String CARPETA_PRINCIPAL ="misImagenesApp/";
+    private final String CARPETA_IMAGEN ="imagenes";
+    private final String DIRECTORIO_IMAGEN= CARPETA_PRINCIPAL+CARPETA_IMAGEN;
     private final int COD_SELECCIONA = 10;
     private final int COD_FOTO = 20;
     Bitmap bitmap;
     File fileImagen;
+
     private ProgressDialog progressDialog;
     ImageView fotoUsuario;
-    TextInputEditText campoNombres, campoApellidos, campoDireccion, campoEmail, campoTelefono, campoCelular, campoNombreUsuario, campoContrasenia;
-    Button botonRegistrar;
+    TextInputEditText campoNombres, campoApellidos,campoDireccion, campoEmail, campoTelefono, campoCelular,campoNombreUsuario, campoContrasenia;
+    Button botonActualizar;
     RequestQueue requestQueue;
     StringRequest stringRequest;
+    private String funcionBoton = "Guardar";
     Usuario usuario = new Usuario();
 
+    public static String nombresU, apellidosU, direccionU, emailU, telefonoU, celularU, nombreUsuarioU, contrasenaU, foto = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registro_usuarios);
+        setContentView(R.layout.activity_actualizar_usuario);
 
         fotoUsuario = findViewById(R.id.imageView);
         campoNombres = findViewById(R.id.textNombres);
-        campoApellidos = findViewById(R.id.textApellidos);
+        campoApellidos= findViewById(R.id.textApellidos);
         campoDireccion = findViewById(R.id.textDireccion);
         campoEmail = findViewById(R.id.textEmail);
         campoCelular = findViewById(R.id.textCelular);
         campoContrasenia = findViewById(R.id.textContrasenia);
         campoTelefono = findViewById(R.id.textTelefono);
         campoNombreUsuario = findViewById(R.id.textUsuario);
-        botonRegistrar = findViewById(R.id.buttonRegistrar);
+        botonActualizar = findViewById(R.id.buttonActualizarUsuario);
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
+        // funcionBoton = getIntent().getExtras().getString("funcion");
+
+        campoNombres.setText(nombresU);
+        campoApellidos.setText(apellidosU);
+        campoDireccion.setText(direccionU);
+        campoCelular.setText(celularU);
+        campoNombreUsuario.setText(nombreUsuarioU);
+        campoTelefono.setText(telefonoU);
+        campoEmail.setText(emailU);
+        campoContrasenia.setText(contrasenaU);
+        cargarWebServiceImagen(foto);
 
         campoNombres.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -130,7 +145,6 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                 return true;
             }
         });
-
         campoEmail.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -139,7 +153,7 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
         });
 
 
-        botonRegistrar.setOnClickListener(new View.OnClickListener() {
+        botonActualizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (campoNombres.getText().toString().isEmpty()
@@ -169,16 +183,15 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Ingrese la Contraseña", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    registrarUsuario();
-                }
 
+                    actualizarUsuario();
+
+                }
             }
         });
-
-
-        if (validarPermisos()) {
+        if(validarPermisos()){
             fotoUsuario.setEnabled(true);
-        } else {
+        }else {
             fotoUsuario.setEnabled(false);
         }
 
@@ -191,13 +204,33 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
 
     }
 
-    private void registrarUsuario() {
-        String url = ServerConfig.URL_BASE + "registroUsuario.php?";
+
+    private void cargarWebServiceImagen(String urlImagen) {
+        urlImagen = urlImagen.replace(" ","%20");
+
+        ImageRequest imageRequest = new ImageRequest(urlImagen, new Response.Listener<Bitmap>() {
+            @Override
+            public void onResponse(Bitmap response) {
+                fotoUsuario.setImageBitmap(response);
+            }
+        }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        }
+
+        );
+        requestQueue.add(imageRequest);
+    }
+
+    private void actualizarUsuario() {
+
+        String url = ServerConfig.URL_BASE+"actualizarUsuario.php?";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-
                 campoNombres.setText("");
                 campoApellidos.setText("");
                 campoDireccion.setText("");
@@ -207,53 +240,51 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                 campoNombreUsuario.setText("");
                 campoContrasenia.setText("");
                 fotoUsuario.setImageResource(R.mipmap.ic_launcher);
-                Toast.makeText(getApplicationContext(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Actualizacion Exitosa", Toast.LENGTH_SHORT).show();
                 finish();
             }
-
 
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error de conexion", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Error de conexion" ,Toast.LENGTH_SHORT).show();
             }
         }
 
-        ) {
+        ){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
 
-                String nombres = campoNombres.getText().toString();
+
+                String nombres =campoNombres.getText().toString();
                 String apellidos = campoApellidos.getText().toString();
                 String email = campoEmail.getText().toString();
                 String telefono = campoTelefono.getText().toString();
                 String celular = campoCelular.getText().toString();
                 String nombreUsuario = campoNombreUsuario.getText().toString();
-                String contrasena = campoContrasenia.getText().toString();
+                String contrasena =campoContrasenia.getText().toString();
                 String direccion = campoDireccion.getText().toString();
                 String imagen = convertirImagenString(bitmap);
 
                 Map<String, String> parametros = new HashMap<>();
-                parametros.put("nombres", nombres.trim());
-                parametros.put("apellidos", apellidos.trim());
-                parametros.put("telefono", telefono.trim());
-                parametros.put("celular", celular.trim());
-                parametros.put("email", email.trim());
-                parametros.put("nombreUsuario", nombreUsuario.trim());
-                parametros.put("contrasena", contrasena.trim());
-                parametros.put("direccion", direccion.trim());
-                parametros.put("imagen", imagen);
+                parametros.put("id",usuario.getId().toString());;
+                parametros.put("nombres",nombres);
+                parametros.put("apellidos",apellidos);
+                parametros.put("telefono",telefono);
+                parametros.put("celular",celular);
+                parametros.put("email",email);
+                parametros.put("nombreUsuario",nombreUsuario);
+                parametros.put("contrasena",contrasena);
+                parametros.put("direccion",direccion);
+                parametros.put("imagen",imagen);
 
                 return parametros;
 
             }
 
-
         };
-
-
-        requestQueue.add(stringRequest);
-
+        //progressDialog.hide();
+        requestQueue.add(stringRequest );
 
     }
 
@@ -280,7 +311,6 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
         return false;
     }
 
-
     //********************************************************************
     //Solicitar el permiso para acceder a la memoria de manera manual
     //********************************************************************
@@ -288,16 +318,15 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == 100) {
-            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+        if(requestCode == 100){
+            if(grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[1] == PackageManager.PERMISSION_GRANTED){
                 fotoUsuario.setEnabled(true);
-            } else {
+            }else {
                 solicitarPermisosManual();
             }
         }
     }
-
 
     //********************************************************************
     //Solicitar permisos de manera manual
@@ -316,7 +345,7 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                     intent.setData(uri);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Los Permisos no fueron aceptados", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"Los Permisos no fueron aceptados",Toast.LENGTH_LONG).show();
                     dialogInterface.dismiss(); // cierra el diálogo
                 }
             }
@@ -350,34 +379,34 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
     private String convertirImagenString(Bitmap bitmap) {
 
         ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100
-                , arrayOutputStream);
-        byte[] imagenByte = arrayOutputStream.toByteArray();
-        String imagenString = Base64.encodeToString(imagenByte, Base64.DEFAULT);
+        bitmap.compress(Bitmap.CompressFormat.JPEG,100
+                ,arrayOutputStream);
+        byte[] imagenByte = arrayOutputStream .toByteArray();
+        String imagenString = Base64.encodeToString(imagenByte,Base64.DEFAULT);
 
         return imagenString;
     }
 
 
-    private void cargarImagen() {
+    private void cargarImagen(){
         final CharSequence[] opciones = {"Tomar Foto", "Cargar Imagen", "Cancelar"};
-        final AlertDialog.Builder alertOpciones = new AlertDialog.Builder(RegistroUsuariosActivity.this);
+        final AlertDialog.Builder alertOpciones = new AlertDialog.Builder(ActualizarUsuarioActivity.this);
         alertOpciones.setTitle("Seleccione una Opcion");
         alertOpciones.setItems(opciones, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
 
-                if (opciones[i].equals("Tomar Foto")) {
+                if(opciones[i].equals("Tomar Foto")){
                     tomarFotografia();
-                } else {
+                }else{
 
-                    if (opciones[i].equals("Cargar Imagen")) {
+                    if(opciones[i].equals("Cargar Imagen")){
                         Intent intent = new Intent(Intent.ACTION_GET_CONTENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         //Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.setType("image/");
-                        startActivityForResult(intent.createChooser(intent, "Seleccione la aplicacion"), COD_SELECCIONA);
+                        startActivityForResult(intent.createChooser(intent,"Seleccione la aplicacion"),COD_SELECCIONA);
 
-                    } else {
+                    }else{
                         dialogInterface.dismiss();
                     }
                 }
@@ -387,43 +416,40 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
         alertOpciones.show();
     }
 
-
-
     private void tomarFotografia() {
 
-        File miFile = new File(Environment.getExternalStorageDirectory(), DIRECTORIO_IMAGEN);
+        File miFile = new File(Environment.getExternalStorageDirectory(),DIRECTORIO_IMAGEN);
         boolean isCreada = miFile.exists();
-        String nombre = "";
+        String nombre ="";
 
-        if (isCreada == false) {
-            isCreada = miFile.mkdirs();
+        if(isCreada==false){
+            isCreada=miFile.mkdirs();
         }
-        if (isCreada == true) {
+        if(isCreada==true) {
             nombre = (System.currentTimeMillis() / 1000) + ".jpg";
 
         }
-        path = Environment.getExternalStorageDirectory() + File.separator + DIRECTORIO_IMAGEN + File.separator + nombre;
-        fileImagen = new File(path);
+        path= Environment.getExternalStorageDirectory()+File.separator+DIRECTORIO_IMAGEN+ File.separator+nombre;
+        fileImagen= new File(path);
 
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            String authorities = getApplicationContext().getPackageName() + ".provider";
-            Uri imageUri = FileProvider.getUriForFile(getApplicationContext(), authorities, fileImagen);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        } else {
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+            String authorities = getApplicationContext().getPackageName()+".provider";
+            Uri imageUri = FileProvider.getUriForFile(getApplicationContext(),authorities,fileImagen);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
+        }else {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(fileImagen));
         }
 
-        startActivityForResult(intent, COD_FOTO);
+        startActivityForResult(intent,COD_FOTO);
     }
-
 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
+        if(resultCode== RESULT_OK) {
 
             switch (requestCode) {
                 case COD_SELECCIONA:
@@ -450,29 +476,27 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                     bitmap = BitmapFactory.decodeFile(path);
                     fotoUsuario.setImageBitmap(bitmap);
                     break;
-
             }
 
-            bitmap = redimencionarImagen(bitmap, 600, 800);
+            bitmap = redimencionarImagen(bitmap,600,800);
 
         }
 
     }
-
-
 
     private Bitmap redimencionarImagen(Bitmap bitmap, float anchoNuevo, float altoNuevo) {
         int ancho = bitmap.getWidth();
         int alto = bitmap.getHeight();
 
-        if (ancho > anchoNuevo || alto > altoNuevo) {
-            float escalaAncho = anchoNuevo / ancho;
-            float escalaAlto = altoNuevo / alto;
+        if(ancho>anchoNuevo || alto>altoNuevo){
+            float escalaAncho = anchoNuevo /ancho;
+            float escalaAlto = altoNuevo/alto;
             Matrix matrix = new Matrix();
             matrix.postScale(escalaAncho, escalaAlto);
-            return Bitmap.createBitmap(bitmap, 0, 0, ancho, alto, matrix, false);
-        } else {
+            return Bitmap.createBitmap(bitmap, 0,0, ancho, alto, matrix, false);
+        }else {
             return bitmap;
         }
     }
 }
+

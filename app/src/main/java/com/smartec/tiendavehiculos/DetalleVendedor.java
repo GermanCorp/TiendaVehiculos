@@ -34,8 +34,6 @@ public class DetalleVendedor extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalle_vendedor);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         request = Volley.newRequestQueue(getApplicationContext());
         nombres = findViewById(R.id.textViewNombresVen);

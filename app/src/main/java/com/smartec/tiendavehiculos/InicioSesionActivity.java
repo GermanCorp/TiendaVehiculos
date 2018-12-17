@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -15,20 +16,21 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.smartec.tiendavehiculos.entidades.Usuario;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class InicioSesionActivity extends AppCompatActivity {
 
-    Button consultar , registrar;
+    Button consultar, registrar;
     TextInputEditText txtUsuario, txtContrasena;
     StringRequest stringRequest;
     RequestQueue requestQueue;
-    Usuario usuario =  new Usuario();
-
+    Usuario usuario = new Usuario();
 
 
     @Override
@@ -36,18 +38,28 @@ public class InicioSesionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio_sesion);
 
-        txtUsuario = (TextInputEditText)findViewById(R.id.textInputUsuario);
-        txtContrasena = (TextInputEditText)findViewById(R.id.textInputPasword);
+        txtUsuario = findViewById(R.id.textInputUsuario);
+        txtContrasena = findViewById(R.id.textInputPasword);
 
         requestQueue = Volley.newRequestQueue(InicioSesionActivity.this);
 
-        consultar = (Button)findViewById(R.id.buttonIniciarSesion);
+        consultar = findViewById(R.id.buttonIniciarSesion);
         consultar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                consultarUsuario();
+                if (txtUsuario.getText().toString().isEmpty()
+                        && txtContrasena.getText().toString().isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Ingrese el usuario y la contraseña", Toast.LENGTH_SHORT).show();
+                } else if (txtUsuario.getText().toString().isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Ingrese el Usuario", Toast.LENGTH_SHORT).show();
+                } else if (txtContrasena.getText().toString().isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Ingrese la Contraseña", Toast.LENGTH_SHORT).show();
 
+                } else {
+
+                    consultarUsuario();
+                }
             }
         });
 
@@ -56,7 +68,7 @@ public class InicioSesionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), RegistroUsuariosActivity.class);
-                intent.putExtra("funcion","Guardar");
+                intent.putExtra("funcion", "Guardar");
                 startActivity(intent);
             }
         });
@@ -64,7 +76,7 @@ public class InicioSesionActivity extends AppCompatActivity {
     }
 
     private void consultarUsuario() {
-        String url = ServerConfig.URL_BASE+"iniciarSesion.php?";
+        String url = ServerConfig.URL_BASE + "iniciarSesion.php?";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -78,32 +90,33 @@ public class InicioSesionActivity extends AppCompatActivity {
                 try {
                     jsonObject = new JSONObject(response);
                     JSONArray json = jsonObject.optJSONArray("usuarios");
-                    if (json.length()<= 0){
+
+                    if (json.length() <= 0) {
                         Toast.makeText(getApplicationContext(), "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
-                    }else{
+                    } else {
                         for (int i = 0; i < json.length(); i++) {
                             JSONObject object = null;
                             object = json.getJSONObject(i);
                             usuario.setId(object.optInt("idUsuarios"));
                         }
-                        Intent intent = new Intent(getApplicationContext(),ActividadPrincipal.class);
-                        startActivity(intent) ;
+                        Intent intent = new Intent(getApplicationContext(), ActividadPrincipal.class);
+                        startActivity(intent);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+
             }
-
-
 
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(),"Error de conexion" + error.toString(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error de conexion" + error.toString(), Toast.LENGTH_SHORT).show();
             }
         }
 
-        ){
+        ) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
 
@@ -111,18 +124,17 @@ public class InicioSesionActivity extends AppCompatActivity {
                 String password = txtContrasena.getText().toString();
 
                 Map<String, String> parametros = new HashMap<>();
-                parametros.put("usuario",nombreUsuario);
-                parametros.put("contrasena",password);
+                parametros.put("usuario", nombreUsuario);
+                parametros.put("contrasena", password);
 
                 return parametros;
 
             }
 
         };
-        requestQueue.add(stringRequest );
+        requestQueue.add(stringRequest);
 
     }
-
 
 
 }
