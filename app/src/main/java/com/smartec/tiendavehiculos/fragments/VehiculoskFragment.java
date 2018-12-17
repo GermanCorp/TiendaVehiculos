@@ -1,18 +1,18 @@
 package com.smartec.tiendavehiculos.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,20 +21,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.smartec.tiendavehiculos.DetalleVendedor;
-import com.smartec.tiendavehiculos.MainActivity;
 import com.smartec.tiendavehiculos.R;
+import com.smartec.tiendavehiculos.RegistroVehiculosActivity;
 import com.smartec.tiendavehiculos.ServerConfig;
 import com.smartec.tiendavehiculos.adapter.VehiculosImagenAdapter;
-import com.smartec.tiendavehiculos.entidades.Marca;
 import com.smartec.tiendavehiculos.entidades.VehiculoCard;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VehiculoskFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
@@ -48,16 +44,12 @@ public class VehiculoskFragment extends Fragment{
 
     private OnFragmentInteractionListener mListener;
 
-    /*private RecyclerView recyclerVehiculos;
-    private ArrayList<Vehiculo> listaVehiculos;
-    private ProgressDialog progress;
-    private RequestQueue request;
-    private JsonObjectRequest jsonObjectRequest;*/
-
     RecyclerView recyclerVehiculos;
     ArrayList<VehiculoCard> listaVehiculos;
     private RequestQueue request;
     private JsonObjectRequest jsonObjectRequest;
+    private SwipeRefreshLayout refreshLayout;
+    private ProgressDialog progress;
 
 
     public VehiculoskFragment() {
@@ -88,14 +80,31 @@ public class VehiculoskFragment extends Fragment{
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_vehiculosk,container,false);
         listaVehiculos  = new ArrayList<>();
+        // Obtener el refreshLayout
+        refreshLayout = (SwipeRefreshLayout) vista.findViewById(R.id.swipeRefresh);
+        refreshLayout.setColorSchemeResources(
+                R.color.s1,
+                R.color.s2,
+                R.color.s3,
+                R.color.s4
+        );
+
+        // Iniciar la tarea asíncrona al revelar el indicador
+        refreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        cargarListaVehiculos();
+                        refreshLayout.setRefreshing(false);
+                    }
+                }
+        );
 
         FloatingActionButton fab = (FloatingActionButton) vista.findViewById(R.id.addCarr);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                Intent intent = new Intent(getContext(), MainActivity.class);
+                Intent intent = new Intent(getContext(), RegistroVehiculosActivity.class);
                 startActivity(intent);
             }
         });
@@ -114,7 +123,19 @@ public class VehiculoskFragment extends Fragment{
         return vista;
     }
 
+
+
+
+
+
+
+
+
     private void cargarListaVehiculos() {
+        listaVehiculos.clear();
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Cargando...");
+        progress.show();
         String url = ServerConfig.URL_BASE + "getVehiculosCard.php";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
@@ -149,9 +170,8 @@ public class VehiculoskFragment extends Fragment{
                     }
                     VehiculosImagenAdapter vehiculosAdapterRecyclerView = new VehiculosImagenAdapter(listaVehiculos, R.layout.cardview_vehiculo, getActivity(), getContext());
                     recyclerVehiculos.setAdapter(vehiculosAdapterRecyclerView);
-                    //progress.hide();
-                   // ArrayAdapter<Marca> arrayAdapterMarca = new ArrayAdapter<Marca>(getContext(),android.R.layout.simple_spinner_dropdown_item, listaMarca);
-                    //spinnerMarca.setAdapter(arrayAdapterMarca);
+                    vehiculosAdapterRecyclerView.notifyDataSetChanged();
+                    progress.hide();
 
                 }catch (Exception e){
                     //e.printStackTrace();

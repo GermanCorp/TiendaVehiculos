@@ -28,8 +28,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.smartec.tiendavehiculos.InicioSesionActivity;
-import com.smartec.tiendavehiculos.MainActivity;
+import com.smartec.tiendavehiculos.ActualizarUsuarioActivity;
 import com.smartec.tiendavehiculos.R;
 import com.smartec.tiendavehiculos.RegistroUsuariosActivity;
 import com.smartec.tiendavehiculos.ServerConfig;
@@ -60,13 +59,13 @@ public class PerfilUsuarioFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    TextView campoNombres, campoApellidos,campoDireccion, campoEmail, campoTelefono, campoCelular,campoNombreUsuario, campoContrasenia;
+    TextView campoNombres, campoApellidos, campoDireccion, campoEmail, campoTelefono, campoCelular, campoNombreUsuario, campoContrasenia;
     ImageView fotoUsuario;
     Button botonEditar;
     StringRequest stringRequest;
     RequestQueue requestQueue;
     Usuario usuario = new Usuario();
-    RegistroUsuariosActivity registroUsuariosActivity = new RegistroUsuariosActivity();
+    ActualizarUsuarioActivity actualizarUsuarioActivity = new ActualizarUsuarioActivity();
 
     private OnFragmentInteractionListener mListener;
 
@@ -100,10 +99,10 @@ public class PerfilUsuarioFragment extends Fragment {
 
         View vista = inflater.inflate(R.layout.fragment_perfil_usuario, container, false);
 
-        fotoUsuario =  (ImageView)vista.findViewById(R.id.imagenUsuario);
+        fotoUsuario = (ImageView) vista.findViewById(R.id.imagenUsuario);
         campoNombres = (TextView) vista.findViewById(R.id.nombres);
-        campoApellidos= (TextView) vista.findViewById(R.id.apellidos);
-        campoDireccion =  (TextView) vista.findViewById(R.id.direccion);
+        campoApellidos = (TextView) vista.findViewById(R.id.apellidos);
+        campoDireccion = (TextView) vista.findViewById(R.id.direccion);
         campoEmail = (TextView) vista.findViewById(R.id.email);
         campoCelular = (TextView) vista.findViewById(R.id.celular);
         campoContrasenia = (TextView) vista.findViewById(R.id.contrasena);
@@ -117,10 +116,8 @@ public class PerfilUsuarioFragment extends Fragment {
         botonEditar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
-                Intent intent = new Intent(getContext(),RegistroUsuariosActivity.class);
-                intent.putExtra("funcion","editar");
+                Intent intent = new Intent(getContext(), ActualizarUsuarioActivity.class);
+                //intent.putExtra("funcion","editar");
                 startActivity(intent);
 
             }
@@ -132,7 +129,7 @@ public class PerfilUsuarioFragment extends Fragment {
     }
 
     private void consultaUsuario() {
-        String url = ServerConfig.URL_BASE+"consultarUsuario.php?";
+        String url = ServerConfig.URL_BASE + "consultarUsuario.php?";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
@@ -151,15 +148,15 @@ public class PerfilUsuarioFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getContext(),"No se ha podido conectar" + error,Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "No se ha podido conectar" + error, Toast.LENGTH_SHORT).show();
             }
         }
 
-        ){
+        ) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parametros = new HashMap<>();
-                parametros.put("id",usuario.getId().toString());//""+usuario.getId()
+                parametros.put("id", usuario.getId().toString());//""+usuario.getId()
 
                 return parametros;
 
@@ -167,7 +164,7 @@ public class PerfilUsuarioFragment extends Fragment {
 
         };
 
-        requestQueue.add(stringRequest );
+        requestQueue.add(stringRequest);
 
 
     }
@@ -208,25 +205,24 @@ public class PerfilUsuarioFragment extends Fragment {
         campoNombreUsuario.setText(usuario.getNombreUsuario());
         campoContrasenia.setText(usuario.getContrasenia());
 
-        String urlImagen =ServerConfig.URL_BASE+usuario.getFotoPerfil();
+        String urlImagen = ServerConfig.URL_BASE + usuario.getFotoPerfil();
         cargarWebServiceImagen(urlImagen);
 
-        registroUsuariosActivity.nombresU = usuario.getNombres();
-        registroUsuariosActivity.apellidosU = usuario.getApellidos();
-        registroUsuariosActivity.direccionU = usuario.getDireccion();
-        registroUsuariosActivity.telefonoU= usuario.getTelefono();
-        registroUsuariosActivity.celularU= usuario.getCelular();
-        registroUsuariosActivity.nombreUsuarioU = usuario.getNombreUsuario();
-        registroUsuariosActivity.contrasenaU = usuario.getContrasenia();
-        registroUsuariosActivity.emailU= usuario.getEmail();
-        registroUsuariosActivity.foto = ServerConfig.URL_BASE+usuario.getFotoPerfil();
-
+        actualizarUsuarioActivity.nombresU = usuario.getNombres();
+        actualizarUsuarioActivity.apellidosU = usuario.getApellidos();
+        actualizarUsuarioActivity.direccionU = usuario.getDireccion();
+        actualizarUsuarioActivity.telefonoU = usuario.getTelefono();
+        actualizarUsuarioActivity.celularU = usuario.getCelular();
+        actualizarUsuarioActivity.nombreUsuarioU = usuario.getNombreUsuario();
+        actualizarUsuarioActivity.contrasenaU = usuario.getContrasenia();
+        actualizarUsuarioActivity.emailU = usuario.getEmail();
+        actualizarUsuarioActivity.foto = ServerConfig.URL_BASE + usuario.getFotoPerfil();
 
 
     }
 
     private void cargarWebServiceImagen(String urlImagen) {
-        urlImagen = urlImagen.replace(" ","%20");
+        urlImagen = urlImagen.replace(" ", "%20");
 
         ImageRequest imageRequest = new ImageRequest(urlImagen, new Response.Listener<Bitmap>() {
             @Override
