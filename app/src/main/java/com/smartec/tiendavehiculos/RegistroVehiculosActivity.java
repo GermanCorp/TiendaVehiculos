@@ -61,29 +61,29 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class RegistroVehiculosActivity extends AppCompatActivity {
 
-    private final String CARPETA_RAIZ = "misImagenesPrueba/";
-    private final String RUTA_IMAGEN = CARPETA_RAIZ+"misFotos";
-    private final int COD_SELECCIONAR = 10;
-    private final int COD_CAMARA = 20;
-    private String path;
-    private Spinner spinnerMarca;
-    private Spinner spinnerModelo;
-    private Spinner spinnerTipo;
-    private Spinner spinnerTransmision;
-    private Spinner spinnerCombustible;
-    private ArrayList<Marca> listaMarca;
-    private ArrayList<Modelo> listaModelo;
-    private ArrayList<Tipo> listaTipo;
-    private ArrayList<Transmision> listaTransmision;
-    private ArrayList<Combustible> listaCombustible;
-    private EditText imputColor;
-    private EditText imputAnio;
-    private EditText imputCilindraje;
-    private EditText imputPrecioVenta;
-    private Button btnRegistrar;
-    private ProgressDialog progress;
-    private Bitmap bitmap;
-    ImageView imagen1;
+    private final String            CARPETA_RAIZ = "misImagenesPrueba/";
+    private final String            RUTA_IMAGEN = CARPETA_RAIZ+"misFotos";
+    private final int               COD_SELECCIONAR = 10;
+    private final int               COD_CAMARA = 20;
+    private String                  path;
+    private Spinner                 spinnerMarca;
+    private Spinner                 spinnerModelo;
+    private Spinner                 spinnerTipo;
+    private Spinner                 spinnerTransmision;
+    private Spinner                 spinnerCombustible;
+    private ArrayList<Marca>        listaMarca;
+    private ArrayList<Modelo>       listaModelo;
+    private ArrayList<Tipo>         listaTipo;
+    private ArrayList<Transmision>  listaTransmision;
+    private ArrayList<Combustible>  listaCombustible;
+    private EditText                imputColor;
+    private EditText                imputAnio;
+    private EditText                imputCilindraje;
+    private EditText                imputPrecioVenta;
+    private Button                  btnRegistrar;
+    private ProgressDialog          progress;
+    private Bitmap                  bitmap;
+    ImageView                       imagen1;
 
 
     @Override
@@ -129,7 +129,28 @@ public class RegistroVehiculosActivity extends AppCompatActivity {
         btnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                registrarVehiculo();
+                if(
+                        imputColor.getText().toString().isEmpty()
+                        &&imputAnio.getText().toString().isEmpty()
+                        &&imputCilindraje.getText().toString().isEmpty()
+                        &&imputPrecioVenta.getText().toString().isEmpty()
+                        &&bitmap == null
+                        ){
+                    Toast.makeText(getApplicationContext(), "Ingrese toda la información",Toast.LENGTH_LONG).show();
+                    }else if(imputColor.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(), "Describa el color",Toast.LENGTH_LONG).show();
+                }else if(imputAnio.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(), "Describa el año",Toast.LENGTH_LONG).show();
+                }else if(imputCilindraje.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(), "Describa el cilindraje",Toast.LENGTH_LONG).show();
+                }else if(imputPrecioVenta.getText().toString().isEmpty()){
+                    Toast.makeText(getApplicationContext(), "Describa el precio de venta",Toast.LENGTH_LONG).show();
+                }else if(bitmap == null){
+                    Toast.makeText(getApplicationContext(), "Seleccione una imagen para el vehículo",Toast.LENGTH_LONG).show();
+                }else{
+                    registrarVehiculo();
+                    finish();
+                }
             }
         });
 
@@ -305,6 +326,8 @@ public class RegistroVehiculosActivity extends AppCompatActivity {
 
 
 
+
+
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
@@ -382,6 +405,7 @@ public class RegistroVehiculosActivity extends AppCompatActivity {
                     imputAnio.setText("");
                     imputCilindraje.setText("");
                     imputPrecioVenta.setText("");
+                    imagen1.setImageBitmap(null);
                     if(response.trim().equalsIgnoreCase("registra")){
                         Toast.makeText(getApplicationContext(),"Registro Completo",Toast.LENGTH_LONG).show();
                     }else {

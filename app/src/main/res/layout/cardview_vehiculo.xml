@@ -113,10 +113,6 @@
                     android:layout_weight="8"
                     android:gravity="center">
 
-                    <CheckBox
-                        android:id="@+id/card_chek_mg"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
             </LinearLayout>

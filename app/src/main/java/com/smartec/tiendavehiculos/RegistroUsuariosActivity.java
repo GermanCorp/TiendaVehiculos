@@ -2,12 +2,14 @@ package com.smartec.tiendavehiculos;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -40,6 +42,7 @@ import com.smartec.tiendavehiculos.entidades.Usuario;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,6 +65,7 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
     RequestQueue requestQueue;
     StringRequest stringRequest;
     Usuario usuario = new Usuario();
+    private ProgressDialog          progress;
 
 
     @Override
@@ -149,7 +153,8 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                         && campoCelular.getText().toString().isEmpty()
                         && campoNombreUsuario.getText().toString().isEmpty()
                         && campoContrasenia.getText().toString().isEmpty()
-                        && campoDireccion.getText().toString().isEmpty()) {
+                        && campoDireccion.getText().toString().isEmpty()
+                        && bitmap == null) {
                     Toast.makeText(getApplicationContext(), "Ingrese toda la informacion", Toast.LENGTH_SHORT).show();
                 } else if (campoNombres.getText().toString().isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Ingrese los Nombres", Toast.LENGTH_SHORT).show();
@@ -167,7 +172,8 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Ingrese el Nombre de Usuario", Toast.LENGTH_SHORT).show();
                 } else if (campoContrasenia.getText().toString().isEmpty()) {
                     Toast.makeText(getApplicationContext(), "Ingrese la Contraseña", Toast.LENGTH_SHORT).show();
-
+                } else if (bitmap == null) {
+                    Toast.makeText(getApplicationContext(), "Seleccione foto de perfil", Toast.LENGTH_SHORT).show();
                 } else {
                     registrarUsuario();
                 }
@@ -192,23 +198,33 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
     }
 
     private void registrarUsuario() {
+        progress = new ProgressDialog(this);
+        progress.setMessage("Registrando...");
+        progress.show();
         String url = ServerConfig.URL_BASE + "registroUsuario.php?";
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                campoNombres.setText("");
-                campoApellidos.setText("");
-                campoDireccion.setText("");
-                campoTelefono.setText("");
-                campoCelular.setText("");
-                campoEmail.setText("");
-                campoNombreUsuario.setText("");
-                campoContrasenia.setText("");
-                fotoUsuario.setImageResource(R.mipmap.ic_launcher);
-                Toast.makeText(getApplicationContext(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
-                finish();
+                if(response.trim().equalsIgnoreCase("registra")){
+                    campoNombres.setText("");
+                    campoApellidos.setText("");
+                    campoDireccion.setText("");
+                    campoTelefono.setText("");
+                    campoCelular.setText("");
+                    campoEmail.setText("");
+                    campoNombreUsuario.setText("");
+                    campoContrasenia.setText("");
+                    fotoUsuario.setImageResource(R.mipmap.ic_launcher);
+                    Toast.makeText(getApplicationContext(), "Registro Exitoso", Toast.LENGTH_SHORT).show();
+                    progress.hide();
+                    finish();
+                }else{
+                    campoNombreUsuario.setText("");
+                    Toast.makeText(getApplicationContext(), "El usuario ya existe", Toast.LENGTH_SHORT).show();
+                    progress.hide();
+                }
             }
 
 
@@ -216,6 +232,7 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(), "Error de conexion", Toast.LENGTH_SHORT).show();
+                progress.hide();
             }
         }
 
@@ -228,7 +245,7 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                 String email = campoEmail.getText().toString();
                 String telefono = campoTelefono.getText().toString();
                 String celular = campoCelular.getText().toString();
-                String nombreUsuario = campoNombreUsuario.getText().toString();
+                //String nombreUsuario = campoNombreUsuario.getText().toString();
                 String contrasena = campoContrasenia.getText().toString();
                 String direccion = campoDireccion.getText().toString();
                 String imagen = convertirImagenString(bitmap);
@@ -239,7 +256,7 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                 parametros.put("telefono", telefono.trim());
                 parametros.put("celular", celular.trim());
                 parametros.put("email", email.trim());
-                parametros.put("nombreUsuario", nombreUsuario.trim());
+                parametros.put("nombreUsuario", campoNombreUsuario.getText().toString().trim());
                 parametros.put("contrasena", contrasena.trim());
                 parametros.put("direccion", direccion.trim());
                 parametros.put("imagen", imagen);
@@ -253,10 +270,10 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
 
 
         requestQueue.add(stringRequest);
+        progress.hide();
 
 
     }
-
 
     //********************************************************************
     //Validar permisos para acceder al almacenamiento del movil
@@ -427,18 +444,32 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
 
             switch (requestCode) {
                 case COD_SELECCIONA:
-
+                    bitmap = null;
+                    fotoUsuario.setImageBitmap(null);
                     Uri miPath = data.getData();
-                    //fotoUsuario.setImageURI(miPath);
+
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), miPath);
-                        fotoUsuario.setImageBitmap(bitmap);
+                        Matrix matrix = new Matrix();
+                        int alto = bitmap.getHeight();
+                        int ancho = bitmap.getWidth();
+
+                        if(ancho>alto){
+                            matrix.setRotate(90);
+                            Bitmap nuevoBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+                            fotoUsuario.setImageBitmap(nuevoBitmap);
+                        }else {
+                            fotoUsuario.setImageBitmap(bitmap);
+                        }
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    break;
 
+                    break;
                 case COD_FOTO:
+                    bitmap = null;
+                    fotoUsuario.setImageBitmap(null);
                     MediaScannerConnection.scanFile(getApplicationContext(), new String[]{path}, null,
                             new MediaScannerConnection.OnScanCompletedListener() {
                                 @Override
@@ -448,16 +479,68 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
                             });
 
                     bitmap = BitmapFactory.decodeFile(path);
-                    fotoUsuario.setImageBitmap(bitmap);
+                    ExifInterface exif = null;
+                    try {
+                        exif = new ExifInterface(path);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+                    fotoUsuario.setImageBitmap(rotateBitmap(bitmap,orientation));
                     break;
 
             }
 
             bitmap = redimencionarImagen(bitmap, 600, 800);
-
         }
 
     }
+
+    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_NORMAL:
+                return bitmap;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bitmap;
+        }
+        try {
+
+            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            return bmRotated;
+        }
+        catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
 
 
 
@@ -470,9 +553,10 @@ public class RegistroUsuariosActivity extends AppCompatActivity {
             float escalaAlto = altoNuevo / alto;
             Matrix matrix = new Matrix();
             matrix.postScale(escalaAncho, escalaAlto);
-            return Bitmap.createBitmap(bitmap, 0, 0, ancho, alto, matrix, false);
+            return Bitmap.createBitmap(bitmap, 0, 0, ancho, alto, matrix, false);/////
         } else {
             return bitmap;
         }
     }
+
 }

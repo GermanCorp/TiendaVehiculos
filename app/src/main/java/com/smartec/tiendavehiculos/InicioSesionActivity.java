@@ -1,6 +1,7 @@
 package com.smartec.tiendavehiculos;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,12 +32,14 @@ public class InicioSesionActivity extends AppCompatActivity {
     StringRequest stringRequest;
     RequestQueue requestQueue;
     Usuario usuario = new Usuario();
+    int resultado = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inicio_sesion);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         txtUsuario = findViewById(R.id.textInputUsuario);
         txtContrasena = findViewById(R.id.textInputPasword);
@@ -77,21 +80,21 @@ public class InicioSesionActivity extends AppCompatActivity {
 
     private void consultarUsuario() {
         String url = ServerConfig.URL_BASE + "iniciarSesion.php?";
+        resultado = 0;
 
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
 
-                txtUsuario.setText("");
-                txtContrasena.setText("");
+                //txtUsuario.setText("");
+                //txtContrasena.setText("");
 
                 JSONObject jsonObject = null;
-
                 try {
                     jsonObject = new JSONObject(response);
                     JSONArray json = jsonObject.optJSONArray("usuarios");
 
-                    if (json.length() <= 0) {
+                    /*if (json.length() <= 0) {
                         Toast.makeText(getApplicationContext(), "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
                     } else {
                         for (int i = 0; i < json.length(); i++) {
@@ -101,11 +104,20 @@ public class InicioSesionActivity extends AppCompatActivity {
                         }
                         Intent intent = new Intent(getApplicationContext(), ActividadPrincipal.class);
                         startActivity(intent);
+                    }*/
+
+                    int idUsuario = 0;
+                    for (int i = 0; i < json.length(); i++) {
+                        JSONObject object = null;
+                        object = json.getJSONObject(i);
+                        usuario.setId(object.optInt("idUsuarios"));
+                        resultado = usuario.getId();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
+                mensaje();
 
             }
 
@@ -136,5 +148,17 @@ public class InicioSesionActivity extends AppCompatActivity {
 
     }
 
-
+    private void mensaje() {
+        if (resultado<=0) {
+            txtUsuario.setText("");
+            txtContrasena.setText("");
+            Toast.makeText(this, "Usuario o contraseña incorrecta", Toast.LENGTH_SHORT).show();
+            //resultado = 1;
+        } else {
+            txtUsuario.setText("");
+            txtContrasena.setText("");
+            Intent intent = new Intent(getApplicationContext(), ActividadPrincipal.class);
+            startActivity(intent);
+        }
+    }
 }

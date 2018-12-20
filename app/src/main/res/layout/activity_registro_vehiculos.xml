@@ -165,6 +165,7 @@
                     android:hint="Color"
                     android:inputType="textCapWords"
                     android:maxLength="25"
+                    android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnñopqrstuvwxyz "
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -183,6 +184,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Año"
+                    android:digits="0123456789"
                     android:inputType="numberDecimal"
                     android:maxLength="4"
                     />
@@ -203,6 +205,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Cilindraje"
+                    android:digits="0123456789"
                     android:inputType="numberDecimal"
                     android:maxLength="4"
                     />
@@ -221,12 +224,15 @@
                     android:layout_height="wrap_content"
                     android:hint="Precio de Venta"
                     android:inputType="number"
+                    android:digits="0123456789"
                     />
             </android.support.design.widget.TextInputLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:orientation="horizontal"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
                 >
                 <LinearLayout
                     android:layout_width="match_parent"

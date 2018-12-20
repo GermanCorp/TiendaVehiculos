@@ -1,5 +1,6 @@
 package com.smartec.tiendavehiculos;
 
+import android.media.ExifInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.app.AlertDialog;
@@ -83,6 +84,9 @@ public class ActualizarUsuarioActivity extends AppCompatActivity {
         campoTelefono = findViewById(R.id.textTelefono);
         campoNombreUsuario = findViewById(R.id.textUsuario);
         botonActualizar = findViewById(R.id.buttonActualizarUsuario);
+
+        //campoNombres.setText(getIntent().getExtras().getString("nombres"));
+        //campoApellidos.setText(getIntent().getExtras().getString("apellidos"));
 
         requestQueue = Volley.newRequestQueue(getApplicationContext());
         // funcionBoton = getIntent().getExtras().getString("funcion");
@@ -211,8 +215,10 @@ public class ActualizarUsuarioActivity extends AppCompatActivity {
         ImageRequest imageRequest = new ImageRequest(urlImagen, new Response.Listener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
-                fotoUsuario.setImageBitmap(response);
-            }
+                bitmap = response;
+                    fotoUsuario.setImageBitmap(response);
+                }
+
         }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -231,19 +237,23 @@ public class ActualizarUsuarioActivity extends AppCompatActivity {
         stringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                campoNombres.setText("");
-                campoApellidos.setText("");
-                campoDireccion.setText("");
-                campoTelefono.setText("");
-                campoCelular.setText("");
-                campoEmail.setText("");
-                campoNombreUsuario.setText("");
-                campoContrasenia.setText("");
-                fotoUsuario.setImageResource(R.mipmap.ic_launcher);
-                Toast.makeText(getApplicationContext(), "Actualizacion Exitosa", Toast.LENGTH_SHORT).show();
-                finish();
+                if(response.trim().equalsIgnoreCase("registra")){
+                    campoNombres.setText("");
+                    campoApellidos.setText("");
+                    campoDireccion.setText("");
+                    campoTelefono.setText("");
+                    campoCelular.setText("");
+                    campoEmail.setText("");
+                    campoNombreUsuario.setText("");
+                    campoContrasenia.setText("");
+                    fotoUsuario.setImageResource(R.mipmap.ic_launcher);
+                    Toast.makeText(getApplicationContext(), "Actualización Exitosa", Toast.LENGTH_SHORT).show();
+                    finish();
+                }else{
+                    campoNombreUsuario.setText("");
+                    Toast.makeText(getApplicationContext(), "El usuario ya existe", Toast.LENGTH_SHORT).show();
+                }
             }
-
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -261,7 +271,7 @@ public class ActualizarUsuarioActivity extends AppCompatActivity {
                 String email = campoEmail.getText().toString();
                 String telefono = campoTelefono.getText().toString();
                 String celular = campoCelular.getText().toString();
-                String nombreUsuario = campoNombreUsuario.getText().toString();
+                //String nombreUsuario = campoNombreUsuario.getText().toString();
                 String contrasena =campoContrasenia.getText().toString();
                 String direccion = campoDireccion.getText().toString();
                 String imagen = convertirImagenString(bitmap);
@@ -273,7 +283,7 @@ public class ActualizarUsuarioActivity extends AppCompatActivity {
                 parametros.put("telefono",telefono);
                 parametros.put("celular",celular);
                 parametros.put("email",email);
-                parametros.put("nombreUsuario",nombreUsuario);
+                parametros.put("nombreUsuario",campoNombreUsuario.getText().toString().trim());
                 parametros.put("contrasena",contrasena);
                 parametros.put("direccion",direccion);
                 parametros.put("imagen",imagen);
@@ -453,15 +463,16 @@ public class ActualizarUsuarioActivity extends AppCompatActivity {
 
             switch (requestCode) {
                 case COD_SELECCIONA:
-
                     Uri miPath = data.getData();
-                    //fotoUsuario.setImageURI(miPath);
+
                     try {
                         bitmap = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), miPath);
                         fotoUsuario.setImageBitmap(bitmap);
+
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                     break;
 
                 case COD_FOTO:
@@ -474,14 +485,66 @@ public class ActualizarUsuarioActivity extends AppCompatActivity {
                             });
 
                     bitmap = BitmapFactory.decodeFile(path);
-                    fotoUsuario.setImageBitmap(bitmap);
+                    ExifInterface exif = null;
+                    try {
+                        exif = new ExifInterface(path);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED);
+                    fotoUsuario.setImageBitmap(rotateBitmap(bitmap,orientation));
                     break;
+
             }
 
-            bitmap = redimencionarImagen(bitmap,600,800);
-
+            bitmap = redimencionarImagen(bitmap, 600, 800);//
         }
 
+    }
+
+
+    public static Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+
+        Matrix matrix = new Matrix();
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_NORMAL:
+                return bitmap;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.setRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setRotate(180);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_TRANSPOSE:
+                matrix.setRotate(90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.setRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_TRANSVERSE:
+                matrix.setRotate(-90);
+                matrix.postScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.setRotate(-90);
+                break;
+            default:
+                return bitmap;
+        }
+        try {
+
+            Bitmap bmRotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);////
+            //bitmap.recycle();
+            return bmRotated;
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private Bitmap redimencionarImagen(Bitmap bitmap, float anchoNuevo, float altoNuevo) {

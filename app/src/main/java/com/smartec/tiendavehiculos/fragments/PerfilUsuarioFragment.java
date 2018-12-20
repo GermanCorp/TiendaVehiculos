@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,7 @@ public class PerfilUsuarioFragment extends Fragment {
     RequestQueue requestQueue;
     Usuario usuario = new Usuario();
     ActualizarUsuarioActivity actualizarUsuarioActivity = new ActualizarUsuarioActivity();
+    private SwipeRefreshLayout refreshLayout;
 
     private OnFragmentInteractionListener mListener;
 
@@ -99,16 +101,29 @@ public class PerfilUsuarioFragment extends Fragment {
 
         View vista = inflater.inflate(R.layout.fragment_perfil_usuario, container, false);
 
-        fotoUsuario = (ImageView) vista.findViewById(R.id.imagenUsuario);
-        campoNombres = (TextView) vista.findViewById(R.id.nombres);
-        campoApellidos = (TextView) vista.findViewById(R.id.apellidos);
-        campoDireccion = (TextView) vista.findViewById(R.id.direccion);
-        campoEmail = (TextView) vista.findViewById(R.id.email);
-        campoCelular = (TextView) vista.findViewById(R.id.celular);
-        campoContrasenia = (TextView) vista.findViewById(R.id.contrasena);
-        campoTelefono = (TextView) vista.findViewById(R.id.telefono);
-        campoNombreUsuario = (TextView) vista.findViewById(R.id.nombreUsuario);
-        botonEditar = (Button) vista.findViewById(R.id.botoneditar);
+        fotoUsuario = vista.findViewById(R.id.imagenUsuario);
+        campoNombres = vista.findViewById(R.id.nombres);
+        campoApellidos = vista.findViewById(R.id.apellidos);
+        campoDireccion = vista.findViewById(R.id.direccion);
+        campoEmail = vista.findViewById(R.id.email);
+        campoCelular = vista.findViewById(R.id.celular);
+        campoContrasenia = vista.findViewById(R.id.contrasena);
+        campoTelefono = vista.findViewById(R.id.telefono);
+        campoNombreUsuario = vista.findViewById(R.id.nombreUsuario);
+        botonEditar = vista.findViewById(R.id.botoneditar);
+
+        refreshLayout = (SwipeRefreshLayout) vista.findViewById(R.id.refreshPerfil);
+
+        // Iniciar la tarea asíncrona al revelar el indicador
+        refreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        consultaUsuario();
+                        refreshLayout.setRefreshing(false);
+                    }
+                }
+        );
 
 
         requestQueue = Volley.newRequestQueue(getContext());
@@ -117,9 +132,7 @@ public class PerfilUsuarioFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), ActualizarUsuarioActivity.class);
-                //intent.putExtra("funcion","editar");
                 startActivity(intent);
-
             }
 
         });
@@ -127,6 +140,8 @@ public class PerfilUsuarioFragment extends Fragment {
         return vista;
 
     }
+
+
 
     private void consultaUsuario() {
         String url = ServerConfig.URL_BASE + "consultarUsuario.php?";
@@ -187,7 +202,6 @@ public class PerfilUsuarioFragment extends Fragment {
                 usuario.setEmail(object.optString("email"));
                 usuario.setContrasenia(object.optString("pasword"));
                 usuario.setFotoPerfil(object.optString("fotoPerfil"));
-
 
             }
 

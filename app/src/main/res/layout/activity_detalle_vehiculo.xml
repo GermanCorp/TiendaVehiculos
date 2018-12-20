@@ -6,17 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".fragments.DetalleVehiculoFragment"
     >
-
-    <ImageView
-        android:id="@+id/imageViewCarroDetalle"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:src="@drawable/carro_predeterminado"
-        android:scaleType="centerCrop"
-        android:layout_marginBottom="20dp"
-        />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -29,6 +19,15 @@
             android:paddingLeft="40dp"
             android:paddingRight="40dp"
             >
+
+            <ImageView
+                android:id="@+id/imageViewCarroDetalle"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:src="@drawable/carro_predeterminado"
+                android:scaleType="centerCrop"
+                android:layout_marginBottom="20dp"
+                />
 
             <LinearLayout
                 android:layout_width="match_parent"
